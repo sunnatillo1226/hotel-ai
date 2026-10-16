@@ -1,0 +1,4 @@
+# requirements-dev.txt — testlash uchun qo'shimcha kutubxonalar (pytest -v uchun)
+-r requirements.txt
+pytest
+httpx

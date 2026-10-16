@@ -1,0 +1,8 @@
+# requirements.txt — backend ishlashi uchun kerakli kutubxonalar (pip install -r requirements.txt)
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+pydantic[email]
+requests
+python-dotenv

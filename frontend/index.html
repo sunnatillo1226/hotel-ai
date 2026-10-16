@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<!-- index.html — saytning ASOSIY sahifasi (mehmon uchun).
+     Tuzilishi: menyu → bosh qism va qidiruv → xonalar → bino va qavatlar → kutib olish → mehmonxona haqida → qulayliklar
+                → suratlar → balkondan ko'rinish → xodimlar → joylashuv (xarita) → hujjatlar → shartlar → mening bronlarim → AI chat → xona oynasi.
+     Mantiq: app.js · Ko'rinish: style.css · Backend manzili: config.js -->
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Silk Road Grand Hotel — Xona bron qilish</title>
+  <meta name="description" content="Silk Road Grand Hotel: onlayn xona bron qilish va AI yordamchi.">
+  <meta name="theme-color" content="#0f3d2e">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%A8%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#rooms">Asosiy qismga o'tish</a>
+  <noscript><p style="padding:16px;background:#f7e5e1">Saytni ishlatish uchun brauzerda JavaScript yoqilgan bo'lishi kerak.</p></noscript>
+
+  <!-- ===== Yuqori menyu ===== -->
+  <header class="nav">
+    <a class="logo" href="#top">Silk Road <span>Grand Hotel</span></a>
+    <nav>
+      <a href="#rooms">Xonalar</a>
+      <a href="#building">Bino</a>
+      <a href="#welcome">Kutib olish</a>
+      <a href="#gallery">Suratlar</a>
+      <a href="#location">Manzil</a>
+      <a href="#documents">Hujjatlar</a>
+      <a href="#mybookings">Bronlarim</a>
+      <a href="admin.html" class="muted">Admin</a>
+    </nav>
+  </header>
+
+  <!-- ===== Bosh qism + qidiruv ===== -->
+  <section class="hero" id="top">
+    <div class="hero-inner">
+      <p class="eyebrow" id="heroTag">Toshkent markazida · 4 yulduzli mehmonxona</p>
+      <h1>Qulay xona — bir necha soniyada</h1>
+      <p class="lead">Sanani tanlang yoki xohishingizni oddiy so'zlar bilan yozing — sun'iy intellekt sizga mos xonani topadi.</p>
+
+      <!-- Oddiy qidiruv -->
+      <form id="searchForm" class="search-card">
+        <label>Kirish sanasi <input type="date" id="fCheckIn" required></label>
+        <label>Chiqish sanasi <input type="date" id="fCheckOut" required></label>
+        <label>Mehmonlar
+          <select id="fGuests">
+            <option value="1">1 kishi</option><option value="2" selected>2 kishi</option>
+            <option value="3">3 kishi</option><option value="4">4 kishi</option><option value="5">5 kishi</option>
+          </select>
+        </label>
+        <label>Xona turi
+          <select id="fType">
+            <option value="">Hammasi</option>
+            <option value="standard">Standart</option><option value="deluxe">Deluxe</option>
+            <option value="family">Oilaviy</option><option value="suite">Suite</option>
+          </select>
+        </label>
+        <button type="submit" class="btn">Xona qidirish</button>
+      </form>
+
+      <!-- AI qidiruv -->
+      <form id="aiForm" class="ai-card">
+        <span class="ai-tag">✨ AI qidiruv</span>
+        <input id="aiText" type="text" maxlength="300" aria-label="Xohishingizni oddiy so'zlar bilan yozing"
+               placeholder='Masalan: "Oilam bilan 4 kishi, balkonli xona kerak, 160$ gacha"'>
+        <button type="submit" class="btn btn-gold">AI bilan topish</button>
+      </form>
+      <ul id="heroFacts" class="hero-facts" aria-label="Mehmonxona haqida qisqacha"></ul>
+    </div>
+  </section>
+
+  <!-- ===== Xonalar ===== -->
+  <main>
+    <section class="section" id="rooms">
+      <div class="section-head">
+        <h2 id="roomsTitle">Bizning xonalar</h2>
+        <p id="roomsSub" class="muted"></p>
+      </div>
+      <div class="audience" role="group" aria-label="Kimlar uchun xona">
+        <span class="audience-label">Kimlar uchun?</span>
+        <div id="audienceBar" class="audience-bar"></div>
+      </div>
+      <p id="audienceHint" class="muted audience-hint" hidden></p>
+      <div id="aiFilters" class="filter-chips" hidden></div>
+      <div id="roomGrid" class="grid" aria-live="polite"></div>
+      <p id="slowNote" class="slow-note" hidden>⏳ Server uyg'onmoqda, bu bir necha soniya olishi mumkin...</p>
+      <p id="roomsEmpty" class="empty" hidden>Afsuski, mos xona topilmadi. Sana yoki talablarni o'zgartirib ko'ring.</p>
+    </section>
+
+    <!-- ===== Bino: haqiqiy surat + qavatlar ro'yxati (ma'lumot: GET /api/hotel -> floors) ===== -->
+    <section class="section alt" id="building">
+      <div class="section-head">
+        <h2>Mehmonxona binosi</h2>
+        <p class="muted">9 qavatli bino, favvorali yashil kirish va yer osti avtoturargoh. <b>Qavatni tanlang</b> — u yerda nima borligini ko'rasiz.</p>
+      </div>
+      <div class="building-wrap">
+        <figure class="building-photo">
+          <img src="img/exterior-pool.jpg" alt="Mehmonxona binosi va hovuzli hovli (namunaviy surat)" width="1200" height="900" loading="lazy">
+          <figcaption>Bino va hovli (namunaviy surat)</figcaption>
+        </figure>
+        <div class="floor-box">
+          <ol id="floorList" class="floor-list" aria-label="Qavatlar"></ol>
+          <aside id="floorPanel" class="floor-panel" aria-live="polite">
+            <h3>Qavatni tanlang</h3>
+            <p class="muted">Ro'yxatdan qavatni bosing.</p>
+          </aside>
+        </div>
+      </div>
+      <ul id="entranceList" class="entrance-list"></ul>
+    </section>
+
+    <!-- ===== Kutib olish xizmati (GET /api/hotel -> welcome) ===== -->
+    <section class="section" id="welcome">
+      <div class="section-head"><h2 id="welcomeTitle">Kutib olish xizmati</h2><p class="muted" id="welcomeIntro"></p></div>
+      <ol id="welcomeSteps" class="welcome-steps"></ol>
+    </section>
+
+    <!-- ===== Mehmonxona haqida (ma'lumot GET /api/hotel dan keladi) ===== -->
+    <section class="section" id="about">
+      <div class="section-head">
+        <h2>Mehmonxona haqida</h2>
+        <p class="muted" id="aboutSub"></p>
+      </div>
+      <div class="about-grid">
+        <div>
+          <h3 class="h3">Bino tuzilishi</h3>
+          <ol id="layoutList" class="layout-list"></ol>
+        </div>
+        <figure class="about-photo">
+          <img src="img/lobby-atrium.jpg" alt="Lobby va resepshn (namunaviy surat)" width="1024" height="768" loading="lazy">
+          <figcaption>Lobby va resepshn</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section alt" id="facilities">
+      <div class="section-head"><h2>Qulayliklar va xizmatlar</h2>
+        <p class="muted">Avtoturargoh, ovqatlanish, oilalar va nogironligi bo'lgan mehmonlar uchun imkoniyatlar.</p></div>
+      <div id="facilityGrid" class="fac-grid"></div>
+    </section>
+
+    <!-- ===== Suratlar galereyasi: bo'limlar bo'yicha (GET /api/hotel -> gallery) ===== -->
+    <section class="section" id="gallery">
+      <div class="section-head"><h2>Mehmonxona suratlari</h2>
+        <p class="muted">Lobby, yo'laklar, restoran va oshxona, zallar, yashil hududlar va atrofdagi xiyobon.</p></div>
+      <div id="galleryTabs" class="gal-tabs" role="tablist"></div>
+      <div id="galleryGrid" class="gal-grid"></div>
+    </section>
+
+    <!-- ===== Balkondan ko'rinish ===== -->
+    <section class="section alt" id="balcony">
+      <div class="section-head"><h2>Balkondan ko'rinish</h2><p class="muted" id="balconySub"></p></div>
+      <figure class="balcony-fig">
+        <img id="balconyImg" src="img/balcony-view.jpg" alt="Balkondan ko'rinish: chapda Toshkent teleminorasi, o'ngda xiyobon" width="1600" height="676" loading="lazy">
+        <span class="bal-label left">📡 Toshkent teleminorasi</span>
+        <span class="bal-label right">🌳 Xiyobon va bog'</span>
+      </figure>
+      <ul id="balconyList" class="distance-list"></ul>
+    </section>
+
+    <section class="section alt" id="staff">
+      <div class="section-head"><h2>Xodimlar va xizmat</h2>
+        <p class="muted">Barcha xodimlar mehmonxona formasida va ismi yozilgan nishon bilan ishlaydi: eshik oldi va yuk tashuvchilar — qizil forma, oq qo'lqop; boshqalar — to'q yashil/qora.</p></div>
+      <ol id="valetSteps" class="valet-steps"></ol>
+      <div id="staffGrid" class="staff-grid"></div>
+    </section>
+
+    <section class="section" id="location">
+      <div class="section-head"><h2>Joylashuv</h2><p class="muted" id="addressLine"></p></div>
+      <div class="loc-grid">
+        <div class="map-box"><iframe id="mapFrame" title="Mehmonxona joylashuvi (OpenStreetMap)" loading="lazy" referrerpolicy="no-referrer"></iframe>
+          <p class="muted small" id="coords"></p></div>
+        <ul id="distanceList" class="distance-list"></ul>
+      </div>
+      <p><a id="mapLink" class="btn btn-ghost-green" target="_blank" rel="noopener">🗺️ Xaritada ochish (OpenStreetMap)</a></p>
+    </section>
+
+    <section class="section" id="documents">
+      <div class="section-head"><h2>Bron uchun hujjatlar</h2><p class="muted" id="docNote"></p></div>
+      <div id="docGrid" class="doc-grid"></div>
+      <p class="muted small" id="docSource"></p>
+    </section>
+
+    <section class="section alt" id="policies">
+      <div class="section-head"><h2>Shartlar</h2></div>
+      <dl id="policyList" class="policy-list"></dl>
+    </section>
+
+    <!-- ===== Mening bronlarim ===== -->
+    <section class="section" id="mybookings">
+      <div class="section-head">
+        <h2>Mening bronlarim</h2>
+        <p class="muted">Bron qilgan email manzilingizni kiriting.</p>
+      </div>
+      <form id="myForm" class="inline-form">
+        <input type="email" id="myEmail" placeholder="email@misol.com" required>
+        <button class="btn" type="submit">Ko'rsatish</button>
+      </form>
+      <div id="myList" class="booking-list"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 Silk Road Grand Hotel · Toshkent</p>
+    <p class="muted small" id="demoNote"></p>
+    <p class="muted small">Rasmlar namunaviy, haqiqiy mehmonxona emas (Pexels/Pixabay, bepul litsenziya): <span id="credits"></span></p>
+    <p class="muted" id="aiStatus"></p>
+  </footer>
+
+  <!-- ===== AI chat (pastki o'ng burchak) ===== -->
+  <button id="chatFab" class="chat-fab" aria-label="AI yordamchi">💬 AI yordamchi</button>
+  <aside id="chatPanel" class="chat-panel" hidden>
+    <div class="chat-head">
+      <strong>AI yordamchi</strong>
+      <button id="chatClose" aria-label="Yopish">✕</button>
+    </div>
+    <div id="chatLog" class="chat-log" role="log" aria-live="polite"></div>
+    <div class="chat-quick" id="chatQuick">
+      <button>Eng arzon xona qaysi?</button>
+      <button>Nonushta bormi?</button>
+      <button>Check-in vaqti?</button>
+      <button>Avtoturargoh bormi?</button>
+      <button>Nikoh guvohnomasi kerakmi?</button>
+      <button>Valet xizmati qanday?</button>
+      <button>Kutib olish xizmati qanday?</button>
+    </div>
+    <form id="chatForm" class="chat-form">
+      <input id="chatInput" type="text" maxlength="500" placeholder="Savolingizni yozing..." autocomplete="off" aria-label="Savolingiz" required>
+      <button class="btn" type="submit" aria-label="Yuborish">➤</button>
+    </form>
+  </aside>
+
+  <!-- ===== Xona oynasi: tavsif + bron + sharhlar ===== -->
+  <dialog id="roomDialog">
+    <button class="dlg-close" id="dlgClose" aria-label="Yopish">✕</button>
+    <div id="dlgBody"></div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="config.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>

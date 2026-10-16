@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!-- admin.html — ADMIN panel (faqat xodim uchun): bronlar soni, tushum, bugungi bandlik, sharhlar kayfiyati, barcha bronlar.
+     Backend'ga X-Admin-Key sarlavhasi bilan murojaat qiladi (kalit — backend/.env dagi ADMIN_KEY). Ko'rinish: style.css -->
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin panel — Silk Road Grand Hotel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="logo" href="index.html">Silk Road <span>Grand Hotel</span></a>
+    <nav><a href="index.html">← Saytga qaytish</a></nav>
+  </header>
+
+  <main class="section">
+    <div class="section-head"><h2>Admin panel</h2><p class="muted">Statistika va barcha bronlar.</p></div>
+
+    <!-- Kirish -->
+    <form id="loginForm" class="inline-form">
+      <input type="password" id="adminKey" placeholder="Admin kaliti" required>
+      <button class="btn" type="submit">Kirish</button>
+    </form>
+    <p id="loginErr" class="msg err" hidden></p>
+
+    <div id="dash" hidden>
+      <div class="stats" id="stats"></div>
+
+      <div class="panel"><h3>Xonalar bo'yicha bronlar</h3><div id="byRoom"></div></div>
+      <div class="panel"><h3>Sharhlar kayfiyati (AI tahlili)</h3><div id="sentiments"></div></div>
+
+      <div class="panel">
+        <h3>So'nggi bronlar</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Mehmon</th><th>Xona</th><th>Sanalar</th><th>Summa</th><th>Holat</th></tr></thead>
+            <tbody id="bookingRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="config.js"></script>
+  <script>
+    const API = window.APP_CONFIG.API_URL;
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+    // Admin kaliti har so'rovda "X-Admin-Key" sarlavhasi bilan yuboriladi
+    async function adminGet(path, key) {
+      const res = await fetch(API + path, { headers: { "X-Admin-Key": key } });
+      if (res.status === 401) throw new Error("Admin kaliti noto'g'ri");
+      if (!res.ok) throw new Error("Server xatosi");
+      return res.json();
+    }
+
+    function bars(container, items, max) {
+      container.innerHTML = items.length
+        ? items.map((i) => `<div class="bar-row"><span>${esc(i.label)}</span>
+            <div><div class="bar" style="width:${max ? Math.max(4, (i.value / max) * 100) : 0}%;${i.color ? "background:" + i.color : ""}"></div></div>
+            <b>${i.value}</b></div>`).join("")
+        : '<p class="muted">Hozircha ma\'lumot yo\'q.</p>';
+    }
+
+    async function load(key) {
+      const [s, bookings] = await Promise.all([adminGet("/api/admin/stats", key), adminGet("/api/admin/bookings", key)]);
+      const card = (v, l) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`;
+      $("stats").innerHTML =
+        card(s.confirmed_bookings, "Tasdiqlangan bronlar") + card("$" + s.revenue, "Umumiy tushum") +
+        card(s.occupancy_percent + "%", `Bugun band (${s.occupied_now}/${s.total_rooms} xona)`) +
+        card(s.cancelled_bookings, "Bekor qilinganlar");
+
+      const maxRoom = Math.max(0, ...s.bookings_by_room.map((r) => r.count));
+      bars($("byRoom"), s.bookings_by_room.map((r) => ({ label: r.room, value: r.count })), maxRoom);
+
+      const sent = s.sentiments, maxS = Math.max(sent.positive, sent.neutral, sent.negative);
+      bars($("sentiments"), [
+        { label: "😊 Ijobiy", value: sent.positive, color: "#2f7d4f" },
+        { label: "😐 Neytral", value: sent.neutral, color: "#9aa59f" },
+        { label: "😞 Salbiy", value: sent.negative, color: "#b3402f" },
+      ], maxS);
+
+      $("bookingRows").innerHTML = bookings.map((b) => `
+        <tr><td>${b.id}</td><td>${esc(b.guest_name)}<br><span class="muted">${esc(b.guest_email)}</span></td>
+        <td>${esc(b.room_name)}</td><td>${b.check_in} → ${b.check_out}</td><td>$${b.total_price}</td>
+        <td><span class="status ${b.status}">${b.status === "confirmed" ? "Tasdiqlangan" : "Bekor"}</span></td></tr>`).join("")
+        || '<tr><td colspan="6" class="muted">Bronlar yo\'q</td></tr>';
+    }
+
+    $("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      try {
+        await load($("adminKey").value);
+        $("dash").hidden = false; $("loginForm").hidden = true; $("loginErr").hidden = true;
+      } catch (err) {
+        $("loginErr").textContent = err.message; $("loginErr").hidden = false;
+      }
+    });
+  </script>
+</body>
+</html>

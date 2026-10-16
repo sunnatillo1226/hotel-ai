@@ -1,0 +1,23 @@
+# Netlify sozlamasi: sayt oddiy statik fayllardan iborat, build kerak emas.
+[build]
+  publish = "."
+
+# Fayllarni brauzer keshida saqlash: 1 soat, keyin o'zgargan-o'zgarmaganini tekshiradi.
+# (Takroriy tashrifda sayt deyarli darrov ochiladi.)
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+# Xavfsizlik sarlavhalari
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
