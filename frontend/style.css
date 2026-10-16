@@ -149,6 +149,8 @@ details.rev-add summary { cursor: pointer; font-weight: 600; }
 .bubble.bot { background: #eef3ef; align-self: flex-start; border-bottom-left-radius: 4px; }
 .bubble.me { background: var(--green); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
 .bubble small { display: block; margin-top: 4px; opacity: .55; font-size: .7rem; }
+.chat-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 8px; }
+.chat-photos img { width: 100%; height: 64px; object-fit: cover; border-radius: 6px; display: block; }
 .chat-quick { display: flex; gap: 6px; padding: 0 12px 8px; flex-wrap: wrap; }
 .chat-quick button { border: 1px solid var(--line); background: #fff; border-radius: 99px; padding: 5px 11px; font-size: .78rem; cursor: pointer; }
 .chat-quick button:hover { border-color: var(--gold); }

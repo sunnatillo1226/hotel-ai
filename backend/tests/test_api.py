@@ -367,3 +367,48 @@ def test_chat_input_validation(client):
     assert client.post("/api/ai/chat", json={"messages": []}).status_code == 422
     assert client.post("/api/ai/chat", json={"messages": [{"role": "system", "content": "x"}]}).status_code == 422
     assert client.post("/api/ai/chat", json={"messages": [{"role": "user", "content": "a" * 1001}]}).status_code == 422
+
+
+# ---------------- Rasm savollari: chat suratlarni ham qaytaradi ----------------
+def chat_full(client, q):
+    return client.post("/api/ai/chat", json={"messages": [{"role": "user", "content": q}]}).json()
+
+
+def test_chat_photos_of_room_topic_and_general(client):
+    room = chat_full(client, "Family xona rasmlari bormi?")
+    assert "Family" in room["answer"] and len(room["images"]) >= 3
+    assert all(i["src"].startswith("img/") for i in room["images"])
+    lobby = chat_full(client, "Lobby qanday ko'rinadi?")
+    assert lobby["images"] and all("lobby" in i["src"] for i in lobby["images"])
+    general = chat_full(client, "Xonalarning rasmi bormi?")
+    assert 1 <= len(general["images"]) <= 6
+    ru = chat_full(client, "Покажите фото номеров")
+    assert ru["images"] and "фото" in ru["answer"].lower()
+
+
+def test_chat_photos_pool_is_honest_and_other_questions_have_no_images(client):
+    pool = chat_full(client, "Hovuz rasmi bormi?")
+    assert pool["images"] == [] and "yo'q" in pool["answer"]          # hovuz yo'q — surat ham ko'rsatilmaydi
+    assert chat_full(client, "Xona narxlari qancha?")["images"] == []
+    assert chat_full(client, "Nonushta bormi?")["images"] == []
+
+
+def test_hf_sentiment_classifier_parses_response(monkeypatch):
+    """Hugging Face tasniflash modeli javobi (label + ball) to'g'ri o'qiladi; xatoda zaxira ishlaydi."""
+    import ai
+
+    class FakeResp:
+        status_code = 200
+        def raise_for_status(self): pass
+        def json(self): return [[{"label": "negative", "score": 0.1}, {"label": "neutral", "score": 0.2}, {"label": "positive", "score": 0.7}]]
+
+    monkeypatch.setattr(ai, "HF_TOKEN", "hf_test")
+    monkeypatch.setattr(ai.requests, "post", lambda *a, **k: FakeResp())
+    assert ai.hf_sentiment("Juda yaxshi mehmonxona") == ("positive", 0.6)
+    assert ai.analyze_sentiment("Juda yaxshi mehmonxona", 5)[0] == "positive"
+
+    def boom(*a, **k):
+        raise ai.requests.ConnectionError("tarmoq yo'q")
+    monkeypatch.setattr(ai.requests, "post", boom)
+    assert ai.hf_sentiment("Juda yaxshi") is None
+    assert ai.analyze_sentiment("Ajoyib, rahmat", 5)[0] == "positive"        # zaxira (qoidalar) ishlaydi

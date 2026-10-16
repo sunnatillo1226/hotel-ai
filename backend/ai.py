@@ -12,6 +12,7 @@ oddiy qoidalarga asoslangan zaxira (fallback) javoblar ishlaydi. Shuning uchun s
 import json
 import os
 import re
+import time
 from typing import Dict, List, Optional, Tuple
 
 import requests
@@ -22,6 +23,10 @@ import hotel_info
 HF_TOKEN = os.getenv("HF_TOKEN", "")
 HF_MODEL = os.getenv("HF_MODEL", "Qwen/Qwen3-8B")
 HF_URL = "https://router.huggingface.co/v1/chat/completions"
+# Sharh kayfiyati uchun BEPUL tasniflash modeli (Hugging Face'ning o'z serverida, ko'p tilli XLM-RoBERTa)
+HF_SENTIMENT_MODEL = os.getenv("HF_SENTIMENT_MODEL", "cardiffnlp/twitter-xlm-roberta-base-sentiment")
+HF_SENTIMENT_URL = f"https://router.huggingface.co/hf-inference/models/{HF_SENTIMENT_MODEL}"
+_chat_paused_until = 0.0     # chat modeli pullik/limitda (402/429) bo'lsa, shu vaqtgacha so'rov yubormaymiz
 
 # Mehmonxona ma'lumoti bitta joyda turadi: hotel_info.py (sayt ham, AI ham shundan oladi)
 
@@ -39,7 +44,8 @@ def hf_chat(messages: List[Dict], max_tokens: int = 400, temperature: float = 0.
     timeout — AI javobini kutish chegarasi (soniya). Oshib ketsa, zaxira rejimga o'tiladi,
     shunda mehmon uzoq kutib qolmaydi.
     """
-    if not HF_TOKEN:
+    global _chat_paused_until
+    if not HF_TOKEN or time.time() < _chat_paused_until:
         return None
     try:
         resp = requests.post(
@@ -53,6 +59,8 @@ def hf_chat(messages: List[Dict], max_tokens: int = 400, temperature: float = 0.
             },
             timeout=(4, timeout),   # (ulanish uchun 4 s, javob uchun `timeout` s)
         )
+        if resp.status_code in (402, 429):                 # kredit tugagan yoki limit: 10 daqiqa urinmaymiz (mehmon kutmasin)
+            _chat_paused_until = time.time() + 600
         resp.raise_for_status()
         text = resp.json()["choices"][0]["message"]["content"] or ""
         # Ba'zi modellar "o'ylash" qismini <think>...</think> ichida yozadi — uni olib tashlaymiz
@@ -98,6 +106,7 @@ QOIDALAR
 - Bron qilishni sen amalga oshirma: foydalanuvchini saytdagi «Xonalar» bo'limiga va bron formasiga yo'nalt.
 - Pasport, karta raqami va boshqa shaxsiy ma'lumotni chatda so'rama; foydalanuvchi yozsa, buni faqat bron formasiga kiritishni ayt.
 - Hujjat qoidasi: shaxsni tasdiqlovchi hujjat hamma uchun; er-xotin sifatida joylashganlar uchun nikoh guvohnomasi; do'st/hamkasb/qarindoshlardan guvohnoma so'ralmaydi. Qoidalar o'zgarishi mumkin — aniqlik uchun resepshn.
+- Surat so'ralsa: suratlar javob ostida avtomatik ko'rsatiladi — "suratlar quyida" deb ayt va yuqoridagi "SURATLAR" ro'yxatidagi izohlarga tayanib qisqa tushuntir. Ro'yxatda yo'q narsa suratini va'da qilma.
 - Markdown sarlavha va ** belgilarini ishlatma, oddiy matn yoz."""
 
 
@@ -237,8 +246,34 @@ NEGATIVE = ["yomon", "iflos", "shovqin", "qimmat", "sekin", "bad", "dirty", "noi
             "rude", "broken", "buzilgan", "yoqmadi", "ужасно", "плохо", "грязно"]
 
 
+def hf_sentiment(comment: str) -> Optional[Tuple[str, float]]:
+    """
+    Hugging Face'ning tayyor tasniflash modeli (bepul): matn ijobiy/neytral/salbiy ekanini aniqlaydi.
+    Qaytaradi: (label, ball) yoki xato bo'lsa None (u holda qoidalarga asoslangan zaxira ishlaydi).
+    """
+    if not HF_TOKEN or not comment.strip():
+        return None
+    try:
+        resp = requests.post(HF_SENTIMENT_URL, headers={"Authorization": f"Bearer {HF_TOKEN}"},
+                             json={"inputs": comment[:500]}, timeout=(4, 10))
+        resp.raise_for_status()
+        data = resp.json()
+        items = data[0] if data and isinstance(data[0], list) else data      # [[{label, score}, ...]]
+        probs = {str(i["label"]).lower(): float(i["score"]) for i in items}
+        label = max(probs, key=probs.get)
+        if label not in ("positive", "neutral", "negative"):
+            return None
+        return label, round(probs.get("positive", 0.0) - probs.get("negative", 0.0), 2)
+    except (requests.RequestException, KeyError, IndexError, TypeError, ValueError) as e:
+        print(f"[AI] Hugging Face sentiment xatosi: {e}")
+        return None
+
+
 def analyze_sentiment(comment: str, rating: int) -> Tuple[str, float]:
-    """Qaytaradi: (positive|neutral|negative, ball -1.0 dan +1.0 gacha)."""
+    """Qaytaradi: (positive|neutral|negative, ball -1.0 dan +1.0 gacha). Avval HF tasniflash modeli, keyin chat modeli, keyin qoidalar."""
+    res = hf_sentiment(comment)
+    if res:
+        return res
     prompt = (
         "Mehmonxona sharhining kayfiyatini aniqla. Faqat bitta so'z qaytar: positive, neutral yoki negative.\n"
         f"Sharh: {comment}"

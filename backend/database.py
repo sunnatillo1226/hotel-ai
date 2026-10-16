@@ -14,9 +14,13 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./hotel.db")
 
-# Railway ba'zan "postgres://..." deb beradi, SQLAlchemy esa "postgresql://" kutadi
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+# Railway ba'zan "postgres://..." yoki "postgresql://..." deb beradi.
+# Loyihada psycopg2 o'rnatilgan, shuning uchun drayverni aniq ko'rsatamiz
+# (aks holda SQLAlchemy 2.1 "psycopg" (v3) ni qidiradi va xato beradi).
+for _prefix in ("postgres://", "postgresql://"):
+    if DATABASE_URL.startswith(_prefix):
+        DATABASE_URL = "postgresql+psycopg2://" + DATABASE_URL[len(_prefix):]
+        break
 
 # SQLite uchun qo'shimcha sozlama kerak, PostgreSQL uchun kerak emas
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}

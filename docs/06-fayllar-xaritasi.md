@@ -31,7 +31,7 @@ Ustoz "bu qism qayerda?" deb so'rasa, shu jadvaldan toping. Har bir faylning yuq
 | `config.js` | Backend manzili (deploydan keyin shu yer o'zgaradi) |
 | `netlify.toml` | Netlify sozlamasi: kesh va xavfsizlik sarlavhalari |
 | `img/*.jpg`, `img/CREDITS.md` | Haqiqiy namunaviy suratlar (nomi bo'yicha guruhlangan: `exterior-*` bino, `lobby-*`, `welcome-*` kutib olish, `bath-*` hammom, `corridor-*` yo'lak, `kitchen-*`, `restaurant-*`, `hall-*` zal, `garden-*`/`park-*` yashil hudud, `room-*`/`bed-*`/`suite-*` yotoqxona, `balcony-view.jpg` balkondan ko'rinish) va mualliflar ro'yxati |
-| `tests/smoke.js` | Sayt testi (44 tekshiruv) |
+| `tests/smoke.js` | Sayt testi (45 tekshiruv) |
 
 ## Boshqalar
 | Fayl | Nima haqida |

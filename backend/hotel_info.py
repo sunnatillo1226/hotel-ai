@@ -380,4 +380,9 @@ def hotel_text(rooms_total: int) -> str:
     lines.append("Qavatlar: " + "; ".join(f"{f['floor']}-qavat — {f['what']}" for f in FLOORS) + ".")
     lines.append("Hujjatlar: " + " ".join(f"[{c['title']}] " + " ".join(c["points"]) for c in DOCUMENTS["cards"]))
     lines.append("Shartlar: " + " ".join(f"{p['title']}: {p['text']}" for p in POLICIES))
+    groups = {}
+    for g in GALLERY:
+        groups.setdefault(g["group"], []).append(g["caption"])
+    lines.append("SURATLAR (galereya): " + "; ".join(f"{k}: " + ", ".join(v) for k, v in groups.items())
+                 + ". Har bir xona turining ham o'z suratlari bor (yotoqxona, hammom, balkon).")
     return "\n".join(lines)

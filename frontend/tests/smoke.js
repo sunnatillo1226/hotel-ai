@@ -156,6 +156,11 @@ const check = (name, ok, extra = "") => { console.log((ok ? "OK   " : "XATO ") +
   await sleep(900);
   check("chat: transfer = aeroport (15$)", [...d.querySelectorAll(".bubble.bot")].pop().textContent.includes("15$"));
 
+  $("chatInput").value = "Lobby suratlarini ko'rsating";
+  $("chatForm").dispatchEvent(new w.Event("submit", { cancelable: true }));
+  await sleep(900);
+  check("chat: rasm savoliga suratlar chatda chiqdi", d.querySelectorAll(".bubble.bot .chat-photos img").length >= 2);
+
   check("JS xatolari yo'q", errors.length === 0, errors.join("; "));
   console.log(fails ? `\n${fails} ta xato` : "\nHammasi yaxshi");
   process.exit(fails ? 1 : 0);

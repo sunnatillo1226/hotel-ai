@@ -28,6 +28,7 @@ from sqlalchemy import func, inspect
 from sqlalchemy.orm import Session, joinedload
 
 import ai
+import chatbot
 import hotel_info
 import schemas
 from database import Base, SessionLocal, engine, get_db
@@ -273,8 +274,11 @@ def create_review(data: schemas.ReviewCreate, db: Session = Depends(get_db)):
 def ai_chat(data: schemas.ChatRequest, db: Session = Depends(get_db)):
     """Mehmonxona yordamchisi. Xonalar ma'lumotini bazadan olib, AI'ga beradi."""
     rooms = rooms_to_dicts(db, db.query(Room).all())
-    answer, source, suggestions = ai.chat_answer([m.model_dump() for m in data.messages], rooms)
-    return {"answer": answer, "source": source, "suggestions": suggestions}
+    messages = [m.model_dump() for m in data.messages]
+    answer, source, suggestions = ai.chat_answer(messages, rooms)
+    last_user = next((m["content"] for m in reversed(messages) if m["role"] == "user"), "")
+    return {"answer": answer, "source": source, "suggestions": suggestions,
+            "images": chatbot.photo_images(last_user, rooms)}         # rasm savoli bo'lsa — suratlar (chatda ko'rsatiladi)
 
 
 @app.post("/api/ai/recommend")

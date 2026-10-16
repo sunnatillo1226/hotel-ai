@@ -4,15 +4,15 @@
 | Tur | Nima tekshiriladi | Qanday |
 |---|---|---|
 | Birlik / API testlari | Backend qoidalari va API javoblari | `pytest` — `backend/tests/test_api.py` |
-| Integratsion (sayt + backend) | Sayt kodi haqiqiy backend bilan birga ishlaydi: qidiruv, bron, sharh, chat | jsdom bilan avtomatik skript, `frontend/tests/smoke.js` (44 tekshiruv) |
+| Integratsion (sayt + backend) | Sayt kodi haqiqiy backend bilan birga ishlaydi: qidiruv, bron, sharh, chat | jsdom bilan avtomatik skript, `frontend/tests/smoke.js` (45 tekshiruv) |
 | Tezlik testi | Javob vaqti va hajmi | `backend/benchmark.py` |
 | Qo'lda tekshiruv | Ko'rinish, telefon, fokus | Brauzerda ko'rish (quyida jadval) |
 
 ## 3.2. Natija
 | Test to'plami | Soni | O'tdi | O'tmadi |
 |---|---|---|---|
-| `pytest` (backend) | 42 | 42 | 0 |
-| Sayt + backend integratsion skript | 44 | 44 | 0 |
+| `pytest` (backend) | 45 | 45 | 0 |
+| Sayt + backend integratsion skript | 45 | 45 | 0 |
 
 Ishga tushirish:
 - Backend testlari: `cd backend && pip install -r requirements-dev.txt && pytest -v`

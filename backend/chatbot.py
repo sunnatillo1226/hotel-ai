@@ -324,6 +324,7 @@ FOLLOW_UPS: Dict[str, Dict[str, List[str]]] = {
         "review": ["Xona narxlari qancha?", "Qanday bron qilaman?", "Manzil qayerda?"],
         "view": ["Deluxe xona haqida", "Manzil qayerda?", "Qanday bron qilaman?"],
         "room": ["Qanday bron qilaman?", "Nonushta bormi?", "Xona narxlari qancha?"],
+        "photos": ["Hammom suratlari", "Balkon suratlari", "Xona narxlari qancha?"],
         "default": ["Xona narxlari qancha?", "Qanday bron qilaman?", "Avtoturargoh bormi?"],
     },
     "ru": {"default": ["Сколько стоят номера?", "Как забронировать?", "Есть ли парковка?"]},
@@ -405,6 +406,119 @@ def _recommendation(q: str, rooms: list, lang: str) -> str:
     return head + "\n".join(lines) + tail
 
 
+# ---------------------------------------------------------------------------
+# Rasm (surat) savollari: "xonaning rasmi bormi?", "lobby qanday ko'rinadi?"
+# Rasmlar hotel_info.GALLERY va bazadagi xonalar (room["images"]) dan olinadi — o'zimizdagi ma'lumot, to'qima emas.
+# ---------------------------------------------------------------------------
+PHOTO_WORDS = ["rasm", "surat", "foto", "photo", "picture", "image", "galere", "gallery", "фото", "картин", "снимк",
+               "qanday ko'rinadi", "qanday ko'rinar", "ko'rsating", "ko'rsat", "ko'rmoqchi", "how does it look", "look like", "покажите", "выглядит"]
+
+# (mavzu, kalit so'zlar, GALLERY bo'limi yoki None, xona rasmi izohidagi so'zlar)
+PHOTO_TOPICS = [
+    ("lobby", ["lobby", "resepshn", "reception", "лобби", "ресепшн"], "Lobby", []),
+    ("restaurant", ["restoran", "oshxona", "nonushta", "taom", "ovqat", "restaurant", "kitchen", "breakfast", "ресторан", "кухн", "завтрак"], "Restoran va oshxona", []),
+    ("bath", ["hammom", "vanna", "dush", "bath", "shower", "ванн", "душ"], None, ["hammom", "dush"]),
+    ("balcony", ["balkon", "manzara", "balcony", "view", "балкон", "вид"], None, ["balkon", "manzara", "ko'rinish"]),
+    ("garden", ["bog'", "hovli", "favvora", "spa", "garden", "fountain", "сад", "двор", "фонтан"], "Yashil hudud", []),
+    ("hall", ["zal", "konferensiya", "banket", "hall", "conference", "зал", "конференц"], "Zallar", []),
+    ("corridor", ["yo'lak", "koridor", "corridor", "hallway", "коридор"], "Yo'laklar", []),
+    ("building", ["bino", "fasad", "tashqi", "exterior", "building", "facade", "здани", "фасад"], "Bino va kirish", []),
+    ("park", ["xiyobon", "park", "парк"], "Atrofdagi xiyobon", []),
+    ("parking", ["avtoturargoh", "turargoh", "parking", "парковк"], "Avtoturargoh", []),
+    ("bedroom", ["yotoqxona", "karavot", "bedroom", "bed", "спальн", "кроват"], None, ["yotoqxona", "mehmon zonasi", "mehmonxona zonasi"]),
+]
+PHOTO_LABEL = {
+    "lobby": {"uz": "lobby", "ru": "лобби", "en": "the lobby"},
+    "restaurant": {"uz": "restoran va oshxona", "ru": "ресторана и кухни", "en": "the restaurant and kitchen"},
+    "bath": {"uz": "hammom", "ru": "ванных комнат", "en": "the bathrooms"},
+    "balcony": {"uz": "balkon va manzara", "ru": "балкона и вида", "en": "the balcony and the view"},
+    "garden": {"uz": "bog' va hovli", "ru": "сада и двора", "en": "the garden and courtyard"},
+    "hall": {"uz": "zallar", "ru": "залов", "en": "the halls"},
+    "corridor": {"uz": "yo'laklar", "ru": "коридоров", "en": "the corridors"},
+    "building": {"uz": "bino", "ru": "здания", "en": "the building"},
+    "park": {"uz": "atrofdagi xiyobon", "ru": "парка рядом", "en": "the nearby park"},
+    "parking": {"uz": "avtoturargoh", "ru": "парковки", "en": "the parking"},
+    "bedroom": {"uz": "yotoqxonalar", "ru": "спален", "en": "the bedrooms"},
+}
+PHOTO_MAX = 6
+
+
+def is_photo_question(q: str) -> bool:
+    return has_word(q, PHOTO_WORDS)
+
+
+def _uniq(items: List[dict], limit: int = PHOTO_MAX) -> List[dict]:
+    seen, out = set(), []
+    for it in items:
+        if it.get("src") and it["src"] not in seen:
+            seen.add(it["src"])
+            out.append({"src": it["src"], "caption": it.get("caption", "")})
+        if len(out) >= limit:
+            break
+    return out
+
+
+def photo_selection(q: str, rooms: list) -> Tuple[str, str, List[dict]]:
+    """Savolga mos suratlar: (tur, sarlavha, suratlar). Tur: 'room' | mavzu nomi | 'general'."""
+    room = find_room(q, rooms)
+    if room:
+        imgs = _uniq(room.get("images") or ([{"src": room["image_url"], "caption": room["name"]}] if room.get("image_url") else []))
+        return "room", room["name"], imgs
+    for topic, words, group, room_words in PHOTO_TOPICS:
+        if not has_word(q, words):
+            continue
+        if group:
+            imgs = [g for g in hotel_info.GALLERY if g["group"] == group]
+        else:
+            imgs = [i for r in rooms for i in (r.get("images") or []) if any(w in i.get("caption", "").lower() for w in room_words)]
+        imgs = _uniq([{"src": g.get("src"), "caption": g.get("caption", "")} for g in imgs])
+        if imgs:
+            return topic, topic, imgs
+    # umumiy: bir nechta xona + lobby + restoran + bog'
+    general = [{"src": r["image_url"], "caption": r["name"]} for r in rooms[:3] if r.get("image_url")]
+    for group in ("Lobby", "Restoran va oshxona", "Yashil hudud"):
+        first = next((g for g in hotel_info.GALLERY if g["group"] == group), None)
+        if first:
+            general.append({"src": first["src"], "caption": first["caption"]})
+    return "general", "", _uniq(general)
+
+
+def photo_reply(question: str, rooms: list) -> Optional[Tuple[str, List[dict]]]:
+    """Savol rasm haqida bo'lsa (javob matni, suratlar) qaytaradi; aks holda None."""
+    lang = detect_lang(question)
+    q = normalize(question).strip()
+    if not is_photo_question(q):
+        return None
+    if has_word(q, INTENTS["pool"]):                       # hovuz yo'q — suratini ham ko'rsatib bo'lmaydi
+        return ANSWERS["pool"][lang], []
+    kind, title, imgs = photo_selection(q, rooms)
+    if not imgs:
+        return {"uz": f"Hozircha bu mavzuda surat topilmadi. Barcha suratlar saytdagi «Galereya» bo'limida; savol bo'lsa, resepshn: {HOTEL['phone']}.",
+                "ru": f"Фото по этой теме пока нет. Все фото — в разделе «Галерея» на сайте; вопросы — ресепшн: {HOTEL['phone']}.",
+                "en": f"I have no photos on this topic yet. See the Gallery section on the site, or call reception: {HOTEL['phone']}."}[lang], []
+    caps = "; ".join(dict.fromkeys(i["caption"] for i in imgs if i["caption"]))      # takroriy izohlar bir marta
+    if kind == "room":
+        text = {"uz": f"Mana «{title}» xonasining suratlari: {caps}.",
+                "ru": f"Вот фото номера «{title}»: {caps}.",
+                "en": f"Here are photos of the {title} room: {caps}."}[lang]
+    elif kind == "general":
+        text = {"uz": "Mana mehmonxonamizdan bir nechta surat: xonalar, lobby, restoran va hovli. Boshqa joylar suratini ham so'rashingiz mumkin (hammom, balkon, zallar, avtoturargoh). To'liq to'plam saytdagi «Galereya» bo'limida.",
+                "ru": "Вот несколько фото нашего отеля: номера, лобби, ресторан и двор. Можно спросить и про другие места (ванная, балкон, залы, парковка). Полная подборка — в разделе «Галерея».",
+                "en": "Here are some photos of our hotel: rooms, lobby, restaurant and courtyard. You can also ask about other places (bathroom, balcony, halls, parking). The full set is in the Gallery section."}[lang]
+    else:
+        label = PHOTO_LABEL[kind][lang]
+        text = {"uz": f"Mana {label} suratlari: {caps}.",
+                "ru": f"Вот фото {label}: {caps}.",
+                "en": f"Here are photos of {label}: {caps}."}[lang]
+    return text, imgs
+
+
+def photo_images(question: str, rooms: list) -> List[dict]:
+    """Chat javobiga qo'shiladigan suratlar (rasm savoli bo'lmasa — bo'sh ro'yxat)."""
+    res = photo_reply(question, rooms)
+    return res[1] if res else []
+
+
 def reply(question: str, history: Optional[List[dict]], rooms: list) -> Tuple[str, List[str]]:
     """
     Savolga javob va keyingi savol takliflarini qaytaradi.
@@ -420,6 +534,10 @@ def reply(question: str, history: Optional[List[dict]], rooms: list) -> Tuple[st
                 "ru": "В целях безопасности не пишите в чат номера паспорта и карты — только в форме бронирования.",
                 "en": "For your safety, please don't type passport or card numbers in chat — use the booking form only."}[lang]
         return warn, sug.get("default", FOLLOW_UPS["uz"]["default"])
+
+    photo = photo_reply(question, rooms)
+    if photo:
+        return photo[0], sug.get("photos", sug["default"])
 
     scores = score_intents(q)
     top = scores[0][1] if scores else None

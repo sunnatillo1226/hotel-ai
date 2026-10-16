@@ -417,10 +417,23 @@ $("myList").addEventListener("click", async (e) => {
 /* ============ 6) AI chat ============ */
 
 const chat = { messages: [] };
-function addBubble(role, text, source) {
+function addBubble(role, text, source, images) {
   const div = document.createElement("div");
   div.className = "bubble " + (role === "user" ? "me" : "bot");
   div.textContent = text;
+  if (images && images.length) {            // rasm savoliga javob: suratlar chatning o'zida (bosilsa katta ochiladi)
+    const grid = document.createElement("div");
+    grid.className = "chat-photos";
+    images.forEach((im) => {
+      const a = document.createElement("a");
+      a.href = im.src; a.target = "_blank"; a.rel = "noopener";
+      const img = document.createElement("img");
+      img.src = im.src; img.alt = im.caption || "Surat"; img.loading = "lazy"; img.title = im.caption || "";
+      a.appendChild(img);
+      grid.appendChild(a);
+    });
+    div.appendChild(grid);
+  }
   if (source) {
     const s = document.createElement("small");
     s.textContent = source === "ai" ? "AI javobi" : "tayyor javob";
@@ -454,7 +467,7 @@ async function sendChat(text) {
   try {
     const data = await api("/api/ai/chat", { method: "POST", body: JSON.stringify({ messages: chat.messages.slice(-20) }) });
     typing.remove();
-    addBubble("assistant", data.answer, data.source);
+    addBubble("assistant", data.answer, data.source, data.images);
     chat.messages.push({ role: "assistant", content: data.answer });
     showSuggestions(data.suggestions);
   } catch (err) {
