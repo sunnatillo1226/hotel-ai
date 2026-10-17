@@ -471,3 +471,49 @@ def test_rooms_search_rejects_reversed_dates(client):
     r = client.get(f"/api/rooms?check_in={d(12)}&check_out={d(10)}")
     assert r.status_code == 400
     assert client.get(f"/api/rooms?check_in={d(10)}&check_out={d(12)}").status_code == 200
+
+
+def test_chat_services_why_location_and_offtopic_prices(client):
+    """«Qanday xizmatlar», «nega aynan siz», ru/en manzil va begona narx savollari (kripto, kurs) to'g'ri ishlaydi."""
+    assert "24 soat resepshn" in chat(client, "qanday xizmatlar bor?")["answer"]
+    assert "Bizni tanlash" in chat(client, "nega aynan sizning mehmonxona?")["answer"]
+    assert "Ташкент" in chat(client, "где находится отель?")["answer"]
+    assert "Tashkent" in chat(client, "where is the hotel?")["answer"]
+    for q in ("bitkoin narxi qancha", "dollar kursi qancha", "oltin narxi qancha"):
+        a = chat(client, q)["answer"]
+        assert "tegishli emas" in a and "55$" not in a, q                 # xona narxlari ro'yxati chiqmasligi kerak
+    assert "55$" in chat(client, "xona narxlari qancha")["answer"]         # haqiqiy narx savoli buzilmagan
+    assert "To'lov" in chat(client, "bitkoin bilan to'lasam bo'ladimi?")["answer"]
+
+
+def test_ai_search_understands_russian_english_and_word_numbers(client):
+    """AI qidiruvning zaxira tahlilchisi ru/en matn va so'z bilan yozilgan sonlarni ham tushunadi."""
+    import ai
+    f = ai.parse_request_fallback("для семьи из 4 человек с балконом")
+    assert f["guests"] == 4 and "balkon" in f["amenities"] and f["audience"] == "family"
+    f = ai.parse_request_fallback("room for 2 with balcony under 100$")
+    assert f["guests"] == 2 and f["max_price"] == 100 and "balkon" in f["amenities"]
+    assert ai.parse_request_fallback("eng arzon xona bitta kishi")["guests"] == 1
+    assert ai.parse_request_fallback("for 2 nights")["guests"] is None          # "2 kecha" mehmon soni emas
+    assert ai.parse_request_fallback("на 2 ночи для пары")["guests"] is None
+
+
+def test_sentiment_fallback_handles_negation(client):
+    import ai
+    assert ai._sentiment_fallback("Yaxshi emas", 2)[0] == "negative"
+    assert ai._sentiment_fallback("not good at all", 2)[0] == "negative"
+    assert ai._sentiment_fallback("Juda yaxshi va toza", 5)[0] == "positive"
+    assert ai._sentiment_fallback("Terrible, dirty and noisy", 1)[0] == "negative"
+
+
+def test_ai_recommend_rejects_reversed_dates(client):
+    r = client.post("/api/ai/recommend", json={"text": "2 kishi", "check_in": d(12), "check_out": d(10)})
+    assert r.status_code == 400
+    assert client.post("/api/ai/recommend", json={"text": "2 kishi", "check_in": d(10), "check_out": d(12)}).status_code == 200
+
+
+def test_chat_greeting_with_question_and_spelling_variants(client):
+    assert "Wi-Fi" in chat(client, "Salom, do you have wifi?")["answer"]       # salom + savol -> savolga javob
+    assert "Nonushta" in chat(client, "rahmat, nonushta bormi?")["answer"]
+    assert "Assalomu alaykum" in chat(client, "Salom")["answer"]               # yolg'iz salom -> salomlashish
+    assert "55$" in chat(client, "xonalar narhi kancha")["answer"]             # imlo xatosi bilan ham narx

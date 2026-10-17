@@ -290,6 +290,8 @@ def ai_recommend(data: schemas.RecommendRequest, db: Session = Depends(get_db)):
     "2 kishi, balkonli, 100$ gacha" kabi erkin matnni tushunib, mos xonalarni topadi.
     Jarayon: matn -> AI filtrlarga ajratadi -> bazadan xonalar -> ball bo'yicha saralash.
     """
+    if data.check_in and data.check_out and data.check_out <= data.check_in:
+        raise HTTPException(400, "Chiqish sanasi kirish sanasidan keyin bo'lishi kerak")
     filters = ai.parse_request(data.text)
     rooms = rooms_to_dicts(db, db.query(Room).all(), data.check_in, data.check_out)
     if data.check_in and data.check_out:

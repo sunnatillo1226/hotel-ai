@@ -141,40 +141,40 @@ KNOWN_AMENITIES = ["wifi", "tv", "konditsioner", "balkon", "jakuzi", "minibar", 
                    "choynak", "fen", "xalat", "ish-stoli", "kofe-mashina", "divan-karavot", "bolalar-beshigi",
                    "moslashgan-hammom"]
 AMENITY_WORDS = {
-    "wifi": ["wifi", "wi-fi", "internet"],
-    "tv": ["tv", "televizor"],
-    "konditsioner": ["konditsioner", "kondisioner", "sovutgich"],
-    "balkon": ["balkon", "terrasa"],
-    "jakuzi": ["jakuzi", "jacuzzi", "vanna"],
-    "minibar": ["minibar"],
-    "nonushta": ["nonushta", "breakfast"],
-    "sejf": ["sejf", "seyf", "safe"],
-    "manzara": ["manzara", "ko'rinish", "view"],
+    "wifi": ["wifi", "wi-fi", "internet", "вайфай", "интернет"],
+    "tv": ["tv", "televizor", "телевизор"],
+    "konditsioner": ["konditsioner", "kondisioner", "sovutgich", "air condition", "air-condition", "кондиционер"],
+    "balkon": ["balkon", "terrasa", "balcony", "балкон"],
+    "jakuzi": ["jakuzi", "jacuzzi", "vanna", "джакузи", "ванна"],
+    "minibar": ["minibar", "минибар"],
+    "nonushta": ["nonushta", "breakfast", "завтрак"],
+    "sejf": ["sejf", "seyf", "safe", "сейф"],
+    "manzara": ["manzara", "ko'rinish", "view", "вид на", "с видом"],
     "choynak": ["choynak", "choy"],
     "fen": ["fen"],
     "xalat": ["xalat"],
-    "ish-stoli": ["ish stoli", "ish-stoli", "stol"],
-    "kofe-mashina": ["kofe"],
+    "ish-stoli": ["ish stoli", "ish-stoli", "stol", "desk", "рабочий стол"],
+    "kofe-mashina": ["kofe", "coffee", "кофе"],
     "divan-karavot": ["divan"],
-    "bolalar-beshigi": ["beshik"],
-    "moslashgan-hammom": ["moslashgan", "aravacha", "nogiron"],
+    "bolalar-beshigi": ["beshik", "crib", "cot", "кроватк"],
+    "moslashgan-hammom": ["moslashgan", "aravacha", "nogiron", "wheelchair", "accessible", "инвалид", "коляск"],
 }
 # Kim uchun? (hotel_info.AUDIENCES kalitlari bilan bir xil)
 AUDIENCE_WORDS = {
-    "accessible": ["nogiron", "aravacha", "accessible", "moslashgan"],
-    "vip": ["vip", "yubiley", "prezident", "president"],
-    "family": ["oila", "bola", "family", "farzand"],
-    "couple": ["er-xotin", "er xotin", "xotinim", "turmush", "juftlik", "asal oyi", "couple", "honeymoon", "sevgilim"],
-    "friends": ["do'st", "dost", "friends", "hamkasb"],
-    "business": ["biznes", "xizmat safari", "business", "komandirovka", "ish bilan"],
-    "solo": ["yolg'iz", "yolgiz", "o'zim", "solo", "alone"],
+    "accessible": ["nogiron", "aravacha", "accessible", "moslashgan", "wheelchair", "инвалид", "коляск"],
+    "vip": ["vip", "yubiley", "prezident", "president", "вип", "президент"],
+    "family": ["oila", "bola", "family", "farzand", "kids", "children", "семь", "ребен", "дети", "с детьми"],
+    "couple": ["er-xotin", "er xotin", "xotinim", "turmush", "juftlik", "asal oyi", "couple", "honeymoon", "sevgilim", "супруг", "медовый", "для пары", "вдвоем", "вдвоём"],
+    "friends": ["do'st", "dost", "friends", "hamkasb", "друзь", "друг", "коллег"],
+    "business": ["biznes", "xizmat safari", "business", "komandirovka", "ish bilan", "командировк", "бизнес", "по работе"],
+    "solo": ["yolg'iz", "yolgiz", "o'zim", "solo", "alone", "один", "одна", "одного", "одиночн"],
 }
 AUDIENCE_KEYS = list(AUDIENCE_WORDS)
 TYPE_WORDS = {
-    "family": ["oila", "bola", "family", "farzand"],
-    "suite": ["lyuks", "lux", "suite", "premium", "hashamat"],
-    "deluxe": ["deluxe", "delyuks"],
-    "standard": ["standart", "standard", "oddiy", "arzon"],
+    "family": ["oila", "bola", "family", "farzand", "семейн"],
+    "suite": ["lyuks", "lux", "suite", "premium", "hashamat", "luxury", "люкс", "роскош"],
+    "deluxe": ["deluxe", "delyuks", "делюкс"],
+    "standard": ["standart", "standard", "oddiy", "arzon", "cheap", "budget", "стандарт", "дешев", "эконом"],
 }
 
 
@@ -219,11 +219,20 @@ def _to_int(value) -> Optional[int]:
 def parse_request_fallback(text: str) -> dict:
     t = text.lower()
     guests = None
-    m = re.search(r"(\d+)\s*(kishi|nafar|odam|person|people|guest|mehmon)", t)
+    m = (re.search(r"(\d+)\s*(?:-?\s*)(kishi|nafar|odam|person|people|guest|adult|mehmon|человек|чел\b|гост|взросл)", t)
+         or re.search(r"(?:for|для)\s+(\d+)\b(?!\s*(?:\$|usd|dollar|dol|доллар|долл|night|day|ноч|сут|дн|kecha|kun))", t))
     if m:
         guests = int(m.group(1))
+    else:
+        words = {"bitta": 1, "yakka": 1, "bir": 1, "ikki": 2, "ikkita": 2, "uch": 3, "uchta": 3, "to'rt": 4, "tort": 4, "besh": 5,
+                 "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "один": 1, "одного": 1, "двое": 2, "двух": 2, "трое": 3, "трех": 3, "четыре": 4, "четверо": 4}
+        m = re.search(r"\b(bitta|yakka|bir|ikki|ikkita|uch|uchta|to'rt|tort|besh|one|two|three|four|five|один|одного|двое|двух|трое|трех|четыре|четверо)\s*"
+                      r"(kishi|nafar|odam|person|people|guest|adult|mehmon|человек|гост)", t)
+        if m:
+            guests = words[m.group(1)]
     max_price = None
-    m = re.search(r"(\d+)\s*(\$|usd|dollar|dol)", t) or re.search(r"(\d+)\s*(gacha|dan arzon)", t)
+    m = (re.search(r"(\d+)\s*(\$|usd|dollar|dol|доллар|долл)", t) or re.search(r"\$\s*(\d+)", t) or
+         re.search(r"(\d+)\s*(gacha|dan arzon|gacha bo)", t) or re.search(r"(?:до|под|under|up to|below)\s*(\d+)\b(?!\s*(?:человек|чел|гост|guest|people|person|adult|night|ноч|сут))", t))
     if m:
         max_price = int(m.group(1))
     room_type = None
@@ -291,6 +300,12 @@ def _sentiment_fallback(comment: str, rating: int) -> Tuple[str, float]:
     c = comment.lower()
     pos = sum(w in c for w in POSITIVE)
     neg = sum(w in c for w in NEGATIVE)
+    # inkor: "yaxshi emas", "not good", "не понравилось/не очень" — ijobiy so'z salbiyga aylanadi
+    negated = sum(bool(re.search(re.escape(w) + r"\s+(?:\w+\s+)?(?:emas|degan emas|yo'q)\b|\b(?:not|isn't|wasn't|no|не|нет)\s+(?:\w+\s+)?" + re.escape(w), c))
+                  for w in POSITIVE)
+    if negated:
+        pos -= negated
+        neg += negated
     score = (pos - neg) * 0.3 + (rating - 3) * 0.2
     score = max(-1.0, min(1.0, score))
     if score > 0.15:

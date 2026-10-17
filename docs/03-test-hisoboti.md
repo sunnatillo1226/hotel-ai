@@ -11,7 +11,7 @@
 ## 3.2. Natija
 | Test to'plami | Soni | O'tdi | O'tmadi |
 |---|---|---|---|
-| `pytest` (backend) | 50 | 50 | 0 |
+| `pytest` (backend) | 55 | 55 | 0 |
 | Sayt + backend integratsion skript | 45 | 45 | 0 |
 
 Ishga tushirish:
@@ -46,6 +46,9 @@ Ishga tushirish:
 | 4 | Ro'yxat sekin ishlardi (150 xonada 168 ms) | Har xona uchun alohida so'rov (N+1) | Bitta so'rovga birlashtirildi — 4-hisobotga qarang |
 | 5 | Eski model: har xona turi faqat bitta bron qabul qilardi (real mehmonxonada bir turdan o'nlab xona bor) | Xona turi va xona soni ajratilmagan edi | `quantity` maydoni va `peak_occupancy` — har kecha band xonalar soni sig'imdan oshmasin |
 | 6 | Eski `hotel.db` yangi ustunlarsiz qolsa, server tushunarsiz xato berardi | Jadval avtomatik o'zgarmaydi | Ishga tushishda tekshiruv va aniq xabar: `hotel.db` ni o'chiring |
+| 7 | AI chat 87 savollik sinovda: «qanday xizmatlar bor?», «nega aynan sizning mehmonxona?» javobsiz qolardi; «bitkoin narxi» xona narxlarini ko'rsatardi; ru/en manzil javobi o'zbekcha chiqardi | Kalit so'zlar yetarli emas edi | «services» mavzusi, kengaytirilgan «why», begona mavzu (kripto, kurs, oltin) himoyasi, ru/en manzil matni; `test_chat_services_why_location_and_offtopic_prices` |
+| 8 | «Salom, wifi bormi?» faqat salom bilan javob berardi; «narhi kancha» (imlo xatosi) tushunilmasdi | Salomlashish ball bo'yicha ustun kelardi | Aniq savol bor bo'lsa, u ustun; imlo variantlari qo'shildi |
+| 9 | AI qidiruv ru/en matnni («для семьи из 4 человек», «room for 2 under 100$») va «bitta kishi»ni tushunmasdi; sana teskari bo'lsa jim ishlardi; sharhda «yaxshi emas» ijobiy hisoblanardi | Zaxira tahlilchi faqat o'zbekcha edi; inkor hisobga olinmagan | Ru/en so'zlar, so'z bilan yozilgan sonlar, 400 xato, inkorni hisobga olish; 3 ta yangi test |
 
 ## 3.5. Qo'lda tekshiruv ro'yxati (himoya oldidan ko'rib chiqing)
 | Tekshiruv | Natija |

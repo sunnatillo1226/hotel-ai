@@ -141,7 +141,7 @@ INTENTS: Dict[str, List[str]] = {
                   "nima qila olasan", "nimalarga yordam", "what can you", "yordam ber", "help", "помощь", "что ты умеешь"],
     "booking_how": ["qanday bron", "bron qilaman", "bron qilmoqchi", "bron qilish", "bron qilmoq", "buyurtma", "band qilmoqchi", "xona olmoq", "xona olaman", "joy olmoq",
                     "how to book", "how do i book", "book a room", "make a reservation", "reserve", "забронировать", "бронь", "бронирован", "как забронировать"],
-    "price_all": ["narx", "necha pul", "qancha turadi", "price", "prices", "rates", "tarif", "цены", "цена", "стоимость", "сколько стоит"],
+    "price_all": ["narx", "narh", "kancha pul", "нарх", "necha pul", "qancha turadi", "price", "prices", "rates", "tarif", "цены", "цена", "стоимость", "сколько стоит"],
     "cheapest": ["eng kam", "minimal", "eng arzon", "arzon xona", "arzonroq", "eng past narx", "cheapest", "cheap", "budget", "самый дешев", "дешев"],
     "premium": ["eng qimmat", "eng yaxshi xona", "eng zo'r", "lyuks", "premium", "most expensive", "luxury", "самый дорог", "люкс"],
     "recommend": ["tavsiya", "qaysi xona", "qaysi biri", "mos xona", "menga xona", "xona kerak", "xona topib", "tanlab ber", "tanlashga",
@@ -167,12 +167,13 @@ INTENTS: Dict[str, List[str]] = {
     "documents": ["hujjat", "pasport", "passport", "nikoh", "guvohnoma", "id karta", "id-karta", "propiska", "document", "documents", "marriage",
                   "certificate", "паспорт", "документ", "свидетельств", "брак"],
     "cancel": ["bekor", "cancel", "qaytadimi", "qaytar", "refund", "pulni qaytar", "отмена", "отменить", "вернуть"],
-    "payment": ["to'lov", "tolov", "to'lash", "karta", "naqd", "payment", "pay", "card", "cash", "оплат", "карт", "наличн"],
+    "payment": ["to'lov", "tolov", "to'lash",  "to'la", "tola", "karta", "naqd", "payment", "pay", "card", "cash", "оплат", "карт", "наличн"],
     "pets": ["hayvon", "mushuk", "kuchuk", "itim", "itimiz", "kuchugim", "mushugim", "pet", "pets", "dog", "cat", "животн", "собак", "кошк"],
     "smoking": ["chekish", "sigaret", "smoking", "smoke", "курить", "курение"],
     "facilities": ["fitnes", "fitness", "sauna", "gym", "spa", "konferensiya", "zal", "conference", "тренажер", "конференц", "сауна"],
     "pool": ["basseyn", "baseyn", "bassein", "hovuz", "suzish", "pool", "swimming", "бассейн"],
-    "why": ["nima uchun sizni", "nega sizni", "nima uchun mehmonxonangiz", "afzallik", "nimasi yaxshi", "why choose", "why your hotel", "why should", "почему вы", "преимущества"],
+    "why": ["nima uchun sizni", "nega sizni", "nima uchun mehmonxonangiz", "nega aynan", "nima uchun aynan", "nega sizning", "nima uchun sizning", "sizni tanlash", "afzallik", "nimasi yaxshi", "why choose", "why your hotel", "why should", "why you", "почему вы", "почему именно", "преимущества"],
+    "services": ["qanday xizmat", "xizmatlar", "xizmat turlari", "qulayliklar", "imkoniyatlar", "nimalar bor", "what services", "services", "amenities", "what do you offer", "какие услуги", "услуги", "удобства"],
     "review": ["sharh", "baho ber", "reyting", "review", "reviews", "rating", "отзыв", "оценк"],
     "view": ["balkon", "teleminora", "minora", "manzara", "ko'rinish", "view", "balcony", "tower", "балкон", "вид", "башня"],
     "contact": ["telefon", "raqam", "aloqa", "email", "pochta", "contact", "phone", "call", "связаться", "телефон", "позвонить", "kontakt"],
@@ -298,6 +299,10 @@ ANSWERS: Dict[str, Dict[str, Optional[str]]] = {
               "Pets are not accepted (guide dogs are welcome)."),
     "smoking": L("Barcha xonalar chekilmaydigan; chekish faqat belgilangan joylarda.", "Все номера для некурящих; курение — только в отведённых местах.",
                  "All rooms are non-smoking; smoking is allowed only in designated areas."),
+    "services": L(
+        "Asosiy xizmatlar: 24 soat resepshn; nonushta (shved stoli) narxga kiritilgan; restoran, lobby-bar va xonaga ovqat; bepul tezkor Wi-Fi; bepul yopiq avtoturargoh va valet; kutib olish xizmati (doorman, bellboy); fitnes zal va sauna (2-qavat); konferensiya zali (80 kishigacha) va biznes burchak; bolalar o'yin burchagi va beshik; nogironlar uchun moslashgan xonalar; aeroportdan transfer (oldindan buyurtma bilan, 15$).",
+        "Основные услуги: круглосуточный ресепшн; завтрак (шведский стол) включён; ресторан, лобби-бар и еда в номер; бесплатный быстрый Wi-Fi; бесплатные крытая парковка и валет; встреча гостей (швейцар, бэллбой); фитнес-зал и сауна (2 этаж); конференц-зал до 80 человек и бизнес-уголок; детская зона и кроватка; адаптированные номера; трансфер из аэропорта по заказу (15$).",
+        "Main services: 24/7 reception; breakfast buffet included; restaurant, lobby bar and room service; free fast Wi-Fi; free covered parking and valet; welcome service (doorman, bellboy); gym and sauna (floor 2); conference hall for up to 80 and a business corner; kids' play area and cots; accessible rooms; airport transfer on pre-order (15$)."),
     "facilities": L(
         "Fitnes zal va sauna 2-qavatda; konferensiya zali (80 kishigacha, proyektor va ovoz tizimi) 1-qavatda; biznes burchak (kompyuter, printer) ham bor. Saytdagi «Suratlar» bo'limida zallar va yashil hududlarni ko'rishingiz mumkin.",
         "Фитнес-зал и сауна на 2 этаже, конференц-зал до 80 человек на 1 этаже, бизнес-уголок. Фото — в разделе «Suratlar».",
@@ -339,6 +344,7 @@ FOLLOW_UPS: Dict[str, Dict[str, List[str]]] = {
         "cancel": ["To'lov qanday?", "Qanday bron qilaman?", "Check-in vaqti?"],
         "pool": ["Fitnes zal bormi?", "Nonushta bormi?", "Xona narxlari qancha?"],
         "why": ["Xona narxlari qancha?", "Oilalar qaysi qavatda?", "Qanday bron qilaman?"],
+        "services": ["Nonushta bormi?", "Fitnes zal bormi?", "Xona narxlari qancha?"],
         "review": ["Xona narxlari qancha?", "Qanday bron qilaman?", "Manzil qayerda?"],
         "view": ["Deluxe (hashamatli) xona haqida", "Manzil qayerda?", "Qanday bron qilaman?"],
         "room": ["Qanday bron qilaman?", "Nonushta bormi?", "Xona narxlari qancha?"],
@@ -348,6 +354,9 @@ FOLLOW_UPS: Dict[str, Dict[str, List[str]]] = {
     "ru": {"default": ["Сколько стоят номера?", "Как забронировать?", "Есть ли парковка?"]},
     "en": {"default": ["How much are the rooms?", "How do I book?", "Is there parking?"]},
 }
+
+NON_HOTEL_WORDS = ["bitkoin", "bitcoin", "kripto", "crypto", "ethereum", "efirium", "dollar kurs", "valyuta kurs", "kurs valyut", "oltin narx",
+                   "gold price", "neft", "benzin", "propan", "gaz narx", "биткоин", "крипто", "курс доллар", "курс валют", "цена золота", "бензин"]
 
 OFF_TOPIC_NOTE = {
     "uz": ("Bu savol mehmonxona xizmatlariga tegishli emas ko'rinadi, shuning uchun aniq javob bera olmayman. "
@@ -557,7 +566,14 @@ def reply(question: str, history: Optional[List[dict]], rooms: list) -> Tuple[st
     if photo:
         return photo[0], sug.get("photos", sug["default"])
 
+    # Mehmonxonaga aloqasiz "narx/kurs" savollari (kripto, valyuta, oltin...) — narxlar ro'yxatini emas, mavzudan tashqari javobni beramiz
+    if has_word(q, NON_HOTEL_WORDS) and not has_word(q, ["xona", "номер", "room", "mehmonxona", "hotel", "отел", "bron", "booking", "to'l", "tolov", "pay", "оплат"]):
+        return OFF_TOPIC_NOTE[lang], sug.get("default", FOLLOW_UPS["uz"]["default"])
+
     scores = score_intents(q)
+    # "Salom, wifi bormi?" — salomlashish/rahmat/xayr so'zi boshqa aniq savol bilan kelsa, aniq savolga javob beramiz
+    if len(scores) > 1 and scores[0][1] in ("greeting", "thanks", "bye"):
+        scores = [x for x in scores if x[1] not in ("greeting", "thanks", "bye")] or scores
     top = scores[0][1] if scores else None
     named_room = find_room(q, rooms)
 
@@ -615,9 +631,13 @@ def reply(question: str, history: Optional[List[dict]], rooms: list) -> Tuple[st
         text = _fmt(ANSWERS["airport"][lang] or ANSWERS["airport"]["uz"], airport=d["value"] if d else "~6 km")
     elif top == "location":
         near = "; ".join(f"{x['place']} — {x['value']}" for x in hotel_info.DISTANCES[:3])
+        sq = next((x for x in hotel_info.DISTANCES if x["place"].startswith("Amir Temur")), None)
+        ap = next((x for x in hotel_info.DISTANCES if "aeroport" in x["place"].lower()), None)
+        sq_m = f"{round(sq['km'] * 1000)} м" if sq else "~270 м"
+        ap_km = f"{ap['km']:.1f}" if ap else "6"
         text = {"uz": f"{HOTEL['name']}: {HOTEL['address']}. {near}. Aniq nuqta va xarita — saytning «Manzil» bo'limida.",
-                "ru": f"{HOTEL['name']}: {HOTEL['address']}. Расстояния: {near}. Карта — в разделе «Manzil».",
-                "en": f"{HOTEL['name']}: {HOTEL['address']}. Distances: {near}. See the map in the Location section."}[lang]
+                "ru": f"{HOTEL['name']}: г. Ташкент, Мирабадский район, рядом с площадью Амира Темура (условный адрес учебного проекта). До площади Амира Темура — {sq_m} пешком (~3 мин), до метро ~500 м, до аэропорта ~{ap_km} км по прямой. Карта — в разделе «Manzil» на сайте.",
+                "en": f"{HOTEL['name']}: Tashkent, Mirabad district, near Amir Temur Square (sample address for a study project). Amir Temur Square is {sq_m.replace('м', 'm')} away (~3 min on foot), the nearest metro ~500 m, the airport ~{ap_km} km in a straight line. See the map in the Location section."}[lang]
     elif top == "view":
         text = (ANSWERS["view"][lang] if lang != "uz" else
                 f"Balkonli xonalar (Deluxe, oilaviy xona, kichik lyuks, Prezident lyuksi) {hotel_info.BALCONY_VIEW['direction']} tomonga qaraydi: "
