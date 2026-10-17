@@ -126,6 +126,30 @@ function roomCard(r) {
     </article>`;
 }
 
+// "Eng ko'p tanlangan xonalar" lentasi: reyting bo'yicha, teng bo'lsa arzoni oldinda
+function renderFeatured(rooms) {
+  const top = [...rooms]
+    .filter((r) => r.avg_rating && r.image_url)
+    .sort((a, b) => b.avg_rating - a.avg_rating || b.review_count - a.review_count || a.price_per_night - b.price_per_night)
+    .slice(0, 4);
+  $("featured").hidden = top.length < 2;
+  $("featuredRail").innerHTML = top.map((r, i) => `
+    <button type="button" class="rail-card" data-id="${r.id}" aria-label="${esc(r.name)} haqida batafsil">
+      <img src="${esc(r.image_url)}" alt="${esc(r.name)}" width="800" height="1000" loading="lazy">
+      ${i === 0 ? '<span class="rail-badge">Eng yuqori baho</span>' : ""}
+      <span class="rail-info">
+        <span class="rail-name">${esc(r.name)}</span>
+        <span class="rail-meta">⭐ ${r.avg_rating} · ${r.capacity} kishigacha · ${r.size_m2} m²</span>
+        <span class="rail-price">$${r.price_per_night} <small>/ kecha</small></span>
+      </span>
+    </button>`).join("");
+}
+
+$("featuredRail").addEventListener("click", (e) => {
+  const card = e.target.closest(".rail-card");
+  if (card) openRoom(Number(card.dataset.id));
+});
+
 function renderRooms(rooms) {
   state.rooms = rooms;
   $("roomGrid").innerHTML = rooms.map(roomCard).join("");
@@ -151,7 +175,10 @@ async function loadRooms(useFilters = false) {
     const rooms = await api("/api/rooms?" + params);
     if (myReq !== state.reqId) return;
     renderRooms(rooms);
-    if (!useFilters && !state.audience) state.catalog = rooms;      // to'liq ro'yxat: bino rasmidan xona ochish uchun
+    if (!useFilters && !state.audience) {
+      state.catalog = rooms;                                          // to'liq ro'yxat: bino rasmidan xona ochish uchun
+      renderFeatured(rooms);
+    }
     $("aiFilters").hidden = true;
     $("roomsTitle").textContent = useFilters ? "Qidiruv natijalari" : "Bizning xona turlari";
     $("roomsSub").textContent = useFilters
@@ -536,7 +563,10 @@ function renderHotel(h) {
   $("docSource").textContent = "Manba: " + h.documents.source;
   $("policyList").innerHTML = h.policies.map((p) => `<div><dt>${esc(p.title)}</dt><dd>${esc(p.text)}</dd></div>`).join("");
   $("demoNote").textContent = h.demo_note;
-  $("credits").innerHTML = h.photo_credits.map((c) => `<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.author)}</a>`).join(", ");
+  const seenAuthors = new Set();
+  $("credits").innerHTML = h.photo_credits
+    .filter((c) => c.url && c.author.length < 40 && !seenAuthors.has(c.author) && seenAuthors.add(c.author))
+    .map((c) => `<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.author)}</a>`).join(", ");
   renderAudienceBar(h.audiences);
   renderEntrance(h);
   renderStaff(h);
@@ -639,5 +669,20 @@ initDates();
 loadRooms(false);
 api("/api/hotel").then(renderHotel).catch(() => { renderAudienceBar([]); });
 api("/api/health").then((h) => {
-  $("aiStatus").textContent = h.ai_enabled ? `AI faol · model: ${h.model}` : "AI zaxira rejimida (HF_TOKEN kiritilmagan)";
+  $("aiStatus").textContent = h.ai_enabled
+    ? "AI faol: sharhlar Hugging Face modeli bilan tahlil qilinadi · chat mehmonxonaning o'z ma'lumotlari asosida javob beradi"
+    : "AI zaxira rejimida (HF_TOKEN kiritilmagan)";
 }).catch(() => {});
+
+// Tepaga qaytish tugmasi: pastga skrol qilinganda ko'rinadi
+(() => {
+  const btn = document.getElementById("toTop");
+  if (!btn) return;
+  const onScroll = () => {
+    btn.classList.toggle("show", window.scrollY > 900);
+    document.body.classList.toggle("scrolled", window.scrollY > 300);      // telefonda chat tugmasi hero'ni yopmasligi uchun
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+  btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+})();

@@ -196,7 +196,7 @@ def test_review_validation(client):
 def test_ai_recommend_family_first(client):
     r = client.post("/api/ai/recommend", json={"text": "Oilam bilan 4 kishi, balkonli xona kerak, 160$ gacha"}).json()
     assert r["filters"]["guests"] == 4 and r["filters"]["max_price"] == 160
-    assert r["rooms"][0]["name"] == "Family xona"
+    assert r["rooms"][0]["name"] == "Oilaviy xona"
     assert all(x["capacity"] >= 4 and x["price_per_night"] <= 160 for x in r["rooms"])
 
 
@@ -335,12 +335,12 @@ def test_chat_named_room_and_followup_context(client):
     assert "3-qavat" in chat(client, "Family xona qancha turadi?", "va qavati?")["answer"]     # oldingi xonani eslab qoladi
     assert "narxlar" not in chat(client, "Deluxe xona haqida ayt")["answer"].lower()
     all_prices = chat(client, "Family xona qancha turadi?", "barcha xonalar narxlari")["answer"]
-    assert "Single" in all_prices and "Prezident" in all_prices                             # umumiy savol -> hamma narxlar
+    assert "yakka" in all_prices and "Prezident" in all_prices                             # umumiy savol -> hamma narxlar
 
 
 def test_chat_recommends_rooms_from_request(client):
     a = chat(client, "2 kishi, 100$ gacha xona tavsiya qiling")["answer"]
-    assert "Double" in a and "Prezident" not in a
+    assert "ikki kishilik" in a and "Prezident" not in a
     assert "nechta mehmon" in chat(client, "menga xona kerak")["answer"].lower()               # kam ma'lumot -> aniqlashtiradi
 
 
@@ -376,10 +376,10 @@ def chat_full(client, q):
 
 def test_chat_photos_of_room_topic_and_general(client):
     room = chat_full(client, "Family xona rasmlari bormi?")
-    assert "Family" in room["answer"] and len(room["images"]) >= 3
+    assert "Oilaviy" in room["answer"] and len(room["images"]) >= 3
     assert all(i["src"].startswith("img/") for i in room["images"])
     lobby = chat_full(client, "Lobby qanday ko'rinadi?")
-    assert lobby["images"] and all("lobby" in i["src"] for i in lobby["images"])
+    assert lobby["images"] and all("lobbi/" in i["src"] for i in lobby["images"])
     general = chat_full(client, "Xonalarning rasmi bormi?")
     assert 1 <= len(general["images"]) <= 6
     ru = chat_full(client, "Покажите фото номеров")
@@ -412,3 +412,55 @@ def test_hf_sentiment_classifier_parses_response(monkeypatch):
     monkeypatch.setattr(ai.requests, "post", boom)
     assert ai.hf_sentiment("Juda yaxshi") is None
     assert ai.analyze_sentiment("Ajoyib, rahmat", 5)[0] == "positive"        # zaxira (qoidalar) ishlaydi
+
+
+# ---------------- Yangi: o'zbekcha nomlar, bazani yangilash, qo'shimcha chat savollari ----------------
+def test_room_names_are_uzbek_and_photos_have_uzbek_paths(client):
+    rooms = client.get("/api/rooms").json()
+    names = {r["code"]: r["name"] for r in rooms}
+    assert names["SGL"] == "Standart yakka xona" and names["FAM"] == "Oilaviy xona" and names["PRS"] == "Prezident lyuksi"
+    for r in rooms:
+        assert r["image_url"].startswith("img/xonalar/")                   # suratlar mavzu papkasida
+        assert all(i["src"].startswith("img/") and i["src"].endswith(".jpg") for i in r["images"])
+        from pathlib import Path
+        frontend = Path(__file__).resolve().parents[2] / "frontend"
+        assert all((frontend / i["src"]).exists() for i in r["images"]), r["code"]     # barcha xona suratlari diskda bor
+
+
+def test_sync_room_display_updates_old_names_but_keeps_price():
+    """Eski bazadagi nom/surat yangilanadi, narx esa o'zgarmaydi."""
+    from database import SessionLocal
+    from models import Room
+    from seed import sync_room_display
+
+    db = SessionLocal()
+    try:
+        room = db.query(Room).filter_by(code="FAM").first()
+        old_price = room.price_per_night
+        room.name, room.image_url, room.price_per_night = "Family xona", "img/eski-surat.jpg", old_price
+        db.commit()
+        assert sync_room_display(db) >= 1
+        db.refresh(room)
+        assert room.name == "Oilaviy xona" and room.image_url.startswith("img/xonalar/") and room.price_per_night == old_price
+        assert sync_room_display(db) == 0                                 # ikkinchi marta o'zgarish yo'q
+    finally:
+        db.close()
+
+
+def test_chat_late_arrival_discount_robot_and_president(client):
+    assert "24 soat" in chat(client, "kech 2 da kelsam bo'ladimi?")["answer"]
+    assert "chegirma" in chat(client, "chegirma bormi?")["answer"].lower()
+    assert "inson emasman" in chat(client, "sen robotmisan?")["answer"]
+    pres = chat(client, "Prezident kim?")["answer"]
+    assert "tegishli emas" in pres and "320" not in pres                  # davlat rahbari haqidagi savol — xona emas
+    assert "320" in chat(client, "Prezident lyuksi qancha?")["answer"]
+
+
+def test_gallery_photos_exist_on_disk_and_have_uzbek_captions(client):
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[2] / "frontend"
+    gallery = client.get("/api/hotel").json()["gallery"]
+    assert len(gallery) >= 30
+    for g in gallery:
+        assert (root / g["src"]).exists(), g["src"]                       # havola buzuq emas
+        assert g["caption"] and "Family" not in g["caption"]

@@ -11,7 +11,7 @@
 ## 3.2. Natija
 | Test to'plami | Soni | O'tdi | O'tmadi |
 |---|---|---|---|
-| `pytest` (backend) | 45 | 45 | 0 |
+| `pytest` (backend) | 49 | 49 | 0 |
 | Sayt + backend integratsion skript | 45 | 45 | 0 |
 
 Ishga tushirish:

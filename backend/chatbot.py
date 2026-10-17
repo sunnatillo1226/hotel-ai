@@ -77,12 +77,12 @@ def money(n) -> str:
 ROOM_ALIASES = {
     "SGL": ["single", "singl", "yakka xona", "bir kishilik", "1 kishilik", "сингл", "одноместн"],
     "DBL": ["double", "dabl", "ikki kishilik", "дабл", "двухместн"],
-    "TWN": ["twin", "tvin", "твин"],
+    "TWN": ["twin", "tvin", "ikki karavotli", "2 karavotli", "твин"],
     "ACC": ["accessible", "moslashgan xona", "moslashgan", "аксессибл"],
-    "DLX": ["deluxe", "delyuks", "deluks", "делюкс", "де-люкс"],
+    "DLX": ["deluxe", "hashamatli", "delyuks", "deluks", "делюкс", "де-люкс"],
     "FAM": ["family xona", "family", "oilaviy xona", "семейн", "фэмили"],
-    "JSU": ["junior", "yunior", "джуниор", "полулюкс"],
-    "PRS": ["prezident", "president", "presidential", "президентск"],
+    "JSU": ["junior", "kichik lyuks", "yunior", "джуниор", "полулюкс"],
+    "PRS": ["prezident lyuksi", "prezident", "president", "presidential", "президентск"],
 }
 
 
@@ -179,6 +179,12 @@ INTENTS: Dict[str, List[str]] = {
     "complaint": ["shikoyat", "norozi", "muammo", "yoqmadi", "complain", "complaint", "problem", "жалоб", "проблем", "не понравил"],
     "languages": ["qaysi til", "tilda", "tillar", "language", "languages", "speak", "на каком языке", "языки"],
     "business": ["biznes", "xizmat safari", "komandirovka", "business", "ish stoli", "командировк", "деловой"],
+    "late_arrival": ["kech keldim", "kech kelsam", "kech kelaman", "kech yetib", "tunda kel", "kechasi kel", "tungi reys", "tunda yetib",
+                     "kelsam bo'ladimi", "kelsam mumkinmi", "yetib kelsam", "kelib qolsam", "kech soat",
+                     "late arrival", "arrive late", "arriving late", "arrive at night", "поздно приед", "поздно прилет", "ночью приед"],
+    "discount": ["chegirma", "aksiya", "skidka", "bonus", "promo", "discount", "special offer", "акци", "скидк"],
+    "is_bot": ["robotmisan", "robotmisiz", "botmisan", "botmisiz", "odammisan", "odammisiz", "insonmisiz", "are you a robot", "are you a bot",
+               "are you human", "ты бот", "ты робот", "ты человек", "вы бот", "вы робот", "вы человек"],
 }
 
 ANSWERS: Dict[str, Dict[str, Optional[str]]] = {
@@ -196,6 +202,18 @@ ANSWERS: Dict[str, Dict[str, Optional[str]]] = {
         "Например: «подберите номер на 2 человек до 100$».",
         "I'm the hotel's AI assistant. I can answer about rooms and prices, recommend a room, explain how to book, required documents, breakfast and services, "
         "parking, location and cancellation. Try: “recommend a room for 2 guests up to 100$”."),
+    "late_arrival": L(
+        f"Resepshn 24 soat ochiq, shuning uchun kechasi ham kelishingiz mumkin. Check-in {HOTEL['check_in']} dan boshlanadi. Juda kech yetib kelsangiz, oldindan resepshnga xabar bering: {HOTEL['phone']} — xonangiz saqlab qo'yiladi.",
+        f"Ресепшн работает круглосуточно, заехать можно и ночью. Заезд с {HOTEL['check_in']}. Если приедете очень поздно, предупредите ресепшн: {HOTEL['phone']} — номер сохранят.",
+        f"Reception is open 24/7, so you can arrive at night. Check-in starts at {HOTEL['check_in']}. If you arrive very late, let reception know in advance: {HOTEL['phone']}."),
+    "discount": L(
+        "Hozircha alohida chegirma tizimi yo'q, lekin narxga nonushta, tezkor Wi-Fi, yopiq avtoturargoh va valet allaqachon kiritilgan. 6 yoshgacha bolalar mavjud karavotda bepul. Maxsus takliflar bo'yicha resepshndan so'rang: " + HOTEL['phone'] + ".",
+        "Отдельной системы скидок пока нет, но в цену уже входят завтрак, быстрый Wi-Fi, парковка и валет. Дети до 6 лет — бесплатно. По особым предложениям — на ресепшн: " + HOTEL['phone'] + ".",
+        "There is no separate discount system yet, but breakfast, fast Wi-Fi, covered parking and valet are already included. Children under 6 stay free. Ask reception about special offers: " + HOTEL['phone'] + "."),
+    "is_bot": L(
+        "Men inson emasman, sun'iy intellekt asosidagi yordamchiman. Mehmonxona ma'lumotlari bo'yicha tez javob beraman; murakkab masalalarda resepshn xodimlari yordam beradi: " + HOTEL['phone'] + ".",
+        "Я не человек, а ИИ-помощник. Быстро отвечаю по данным отеля; в сложных случаях помогут сотрудники ресепшн: " + HOTEL['phone'] + ".",
+        "I'm not a human — I'm an AI assistant. I answer quickly from the hotel's data; for complex matters our reception team will help: " + HOTEL['phone'] + "."),
     "pool": L("Afsuski, mehmonxonada suzish havzasi (basseyn) yo'q. Fitnes zal va sauna 2-qavatda mavjud.", "К сожалению, бассейна в отеле нет. Есть фитнес-зал и сауна на 2 этаже.",
               "Sorry, the hotel has no swimming pool. There is a gym and a sauna on floor 2."),
     "why": L("Bizni tanlash sabablari: markaziy joylashuv (Amir Temur xiyobonidan 270 m), qavatlar mehmon turiga ko'ra ajratilgan (oilalar alohida, tinch qavatda), 24 soat resepshn, nonushta narxga kiritilgan, bepul yopiq avtoturargoh va valet, formadagi xodimlar kutib oladi.",
@@ -251,18 +269,18 @@ ANSWERS: Dict[str, Dict[str, Optional[str]]] = {
         "Отель {stars}★, {floors_above} этажей (+{floors_below} подземных), {elevators} лифта. Этажи разделены по типам гостей: 3 — семьи, 4 — одиночные гости, 5–6 — пары, 7 — друзья (Twin), 8 — Deluxe, 9 — Suite; 2 — номера для маломобильных гостей.",
         "{stars}-star hotel, {floors_above} floors (+{floors_below} underground), {elevators} lifts. Floors are separated by guest type: 3 — families, 4 — solo guests, 5–6 — couples, 7 — friends (Twin), 8 — Deluxe, 9 — Suites; 2 — accessible rooms."),
     "family": L(
-        "Oilalar uchun alohida 3-qavat ajratilgan: faqat Family xonalar (4 kishigacha, 36 m², balkon), tinch, bolalar o'yin burchagi bor. "
+        "Oilalar uchun alohida 3-qavat ajratilgan: faqat oilaviy xonalar (4 kishigacha, 36 m², balkon), tinch, bolalar o'yin burchagi bor. "
         "6 yoshgacha bolalar mavjud karavotda BEPUL, qo'shimcha karavot 15$/kecha, bolalar beshigi bepul. Bolalar menyusi va stuli bor. "
         "Bronda ota-ona er-xotin sifatida joylashsa, nikoh guvohnomasi raqami kiritiladi; bolalar uchun tug'ilganlik guvohnomasi yoki ID ma'lumoti olinadi.",
         "Для семей выделен отдельный 3-й этаж: только семейные номера (до 4 гостей), тихо, есть детская зона. Дети до 6 лет — бесплатно на имеющейся кровати, доп. кровать 15$/ночь, детская кроватка бесплатно.",
         "Families have their own quiet 3rd floor with Family rooms (up to 4 guests). Children under 6 stay free in existing beds, an extra bed is 15$/night, and a cot is free."),
     "couples": L(
-        "Juftliklar uchun 5–6-qavatlardagi Standart Double ({p_DBL}$), balkonli Deluxe ({p_DLX}$, king-size) yoki Junior Suite ({p_JSU}$) mos. "
+        "Juftliklar uchun 5–6-qavatlardagi standart ikki kishilik xona ({p_DBL}$), balkonli Deluxe ({p_DLX}$, king-size) yoki kichik lyuks ({p_JSU}$) mos. "
         "Er-xotin sifatida joylashish uchun NIKOH GUVOHNOMASI kerak: bronda «Biz er-xotinmiz» belgisini qo'yib, guvohnoma raqamini kiriting; joylashishda asli ko'rsatiladi.",
         "Для пар подойдут Double (5–6 этаж), Deluxe с балконом или Junior Suite. Для проживания супругов нужно свидетельство о браке: при бронировании отметьте «Мы супруги» и введите номер.",
         "For couples: Standard Double (floors 5–6), Deluxe with balcony or Junior Suite. Married couples need a marriage certificate: tick “We are a married couple” when booking and enter its number."),
     "accessible": L(
-        "2-qavatda 6 ta moslashgan xona bor: eshik 90 sm+, pandussiz kirish, aravachada kirish mumkin bo'lgan dush, tutqichlar, liftga eng yaqin. Avtoturargohda 4 ta kengaytirilgan o'rin. Bronda «Moslashgan xona (ACC)» ni tanlang.",
+        "2-qavatda 6 ta moslashgan xona bor: eshik 90 sm+, pandussiz kirish, aravachada kirish mumkin bo'lgan dush, tutqichlar, liftga eng yaqin. Avtoturargohda 4 ta kengaytirilgan o'rin. Bronda «Moslashgan xona» (ACC) ni tanlang.",
         "На 2 этаже 6 адаптированных номеров: двери от 90 см, без порогов, душ для коляски, поручни, рядом с лифтом. На парковке 4 расширенных места.",
         "Our 6 accessible rooms are on floor 2: 90 cm+ doors, step-free entry, roll-in shower, grab bars, next to the lift. 4 wider parking spaces."),
     "documents": L(
@@ -293,7 +311,7 @@ ANSWERS: Dict[str, Dict[str, Optional[str]]] = {
                   f"We're sorry about that. Please tell reception ({HOTEL['phone']}) or write to {HOTEL['email']} and we'll fix it quickly."),
     "languages": L("Xodimlarimiz o'zbek, rus va ingliz tillarida xizmat ko'rsatadi; bu yordamchi ham shu tillarda javob beradi.",
                    "Персонал говорит по-узбекски, по-русски и по-английски; помощник отвечает на этих языках.", "Our staff speak Uzbek, Russian and English, and so does this assistant."),
-    "business": L("Xizmat safari uchun Standart Single (4-qavat, {p_SGL}$) yoki Deluxe (8-qavat, {p_DLX}$) qulay: ish stoli, tezkor Wi-Fi, tinch joy. 1-qavatda konferensiya zali (80 kishi) va biznes burchak bor.",
+    "business": L("Xizmat safari uchun standart yakka xona (4-qavat, {p_SGL}$) yoki Deluxe (8-qavat, {p_DLX}$) qulay: ish stoli, tezkor Wi-Fi, tinch joy. 1-qavatda konferensiya zali (80 kishi) va biznes burchak bor.",
                   "Для командировки подойдут Single ({p_SGL}$) или Deluxe ({p_DLX}$): рабочий стол, быстрый Wi-Fi. Есть конференц-зал на 80 человек и бизнес-уголок.",
                   "For business trips: Standard Single ({p_SGL}$) or Deluxe ({p_DLX}$) with a desk and fast Wi-Fi. A 80-person conference hall and business corner are available."),
 }
@@ -303,8 +321,8 @@ FOLLOW_UPS: Dict[str, Dict[str, List[str]]] = {
     "uz": {
         "greeting": ["Xona narxlari qancha?", "Qanday bron qilaman?", "Oilam uchun xona kerak"],
         "price_all": ["Eng arzon xona qaysi?", "Nonushta narxga kiradimi?", "Qanday bron qilaman?"],
-        "cheapest": ["Single xona haqida", "Qanday bron qilaman?", "Avtoturargoh bormi?"],
-        "premium": ["Prezident Suite haqida", "Balkondan nima ko'rinadi?", "Qanday bron qilaman?"],
+        "cheapest": ["Standart yakka xona haqida", "Qanday bron qilaman?", "Avtoturargoh bormi?"],
+        "premium": ["Prezident lyuksi haqida", "Balkondan nima ko'rinadi?", "Qanday bron qilaman?"],
         "recommend": ["Qanday bron qilaman?", "Nonushta bormi?", "Qanday hujjatlar kerak?"],
         "booking_how": ["Qanday hujjatlar kerak?", "Bekor qilish shartlari?", "To'lov qanday?"],
         "checkin_out": ["Nonushta bormi?", "Avtoturargoh bormi?", "Kutib olish xizmati qanday?"],
@@ -315,14 +333,14 @@ FOLLOW_UPS: Dict[str, Dict[str, List[str]]] = {
         "location": ["Aeroportdan qanday boraman?", "Balkondan nima ko'rinadi?", "Avtoturargoh bormi?"],
         "airport": ["Manzil qayerda?", "Check-in vaqti?", "Qanday bron qilaman?"],
         "documents": ["Er-xotinlar uchun nima kerak?", "Qanday bron qilaman?", "Bekor qilish shartlari?"],
-        "couples": ["Deluxe xona haqida", "Qanday hujjatlar kerak?", "Qanday bron qilaman?"],
-        "family": ["Family xona haqida", "Oilalar qaysi qavatda?", "Nonushta bormi?"],
+        "couples": ["Deluxe (hashamatli) xona haqida", "Qanday hujjatlar kerak?", "Qanday bron qilaman?"],
+        "family": ["Oilaviy xona haqida", "Oilalar qaysi qavatda?", "Nonushta bormi?"],
         "floors": ["Oilalar qaysi qavatda?", "Nogironlar uchun xona bormi?", "Balkondan nima ko'rinadi?"],
         "cancel": ["To'lov qanday?", "Qanday bron qilaman?", "Check-in vaqti?"],
         "pool": ["Fitnes zal bormi?", "Nonushta bormi?", "Xona narxlari qancha?"],
         "why": ["Xona narxlari qancha?", "Oilalar qaysi qavatda?", "Qanday bron qilaman?"],
         "review": ["Xona narxlari qancha?", "Qanday bron qilaman?", "Manzil qayerda?"],
-        "view": ["Deluxe xona haqida", "Manzil qayerda?", "Qanday bron qilaman?"],
+        "view": ["Deluxe (hashamatli) xona haqida", "Manzil qayerda?", "Qanday bron qilaman?"],
         "room": ["Qanday bron qilaman?", "Nonushta bormi?", "Xona narxlari qancha?"],
         "photos": ["Hammom suratlari", "Balkon suratlari", "Xona narxlari qancha?"],
         "default": ["Xona narxlari qancha?", "Qanday bron qilaman?", "Avtoturargoh bormi?"],
@@ -543,6 +561,11 @@ def reply(question: str, history: Optional[List[dict]], rooms: list) -> Tuple[st
     top = scores[0][1] if scores else None
     named_room = find_room(q, rooms)
 
+    # "Prezident kim?" — bu davlat rahbari haqidagi savol, "Prezident lyuksi" xonasi emas: mavzudan tashqari
+    if named_room and named_room.get("code") == "PRS" and has_word(q, ["kim", "kimdir", "who", "кто"]) and \
+            not has_word(q, ["lyuks", "suite", "xona", "narx", "qancha", "rasm", "room", "price", "номер"]):
+        return OFF_TOPIC_NOTE[lang], sug.get("default", FOLLOW_UPS["uz"]["default"])
+
     # 1) aniq xona nomi aytilgan
     if named_room and top not in ("floors", "documents", "cancel"):
         attr = room_attribute(named_room, q, lang)
@@ -597,7 +620,7 @@ def reply(question: str, history: Optional[List[dict]], rooms: list) -> Tuple[st
                 "en": f"{HOTEL['name']}: {HOTEL['address']}. Distances: {near}. See the map in the Location section."}[lang]
     elif top == "view":
         text = (ANSWERS["view"][lang] if lang != "uz" else
-                f"Balkonli xonalar (Deluxe, Family, Junior Suite, Prezident) {hotel_info.BALCONY_VIEW['direction']} tomonga qaraydi: "
+                f"Balkonli xonalar (Deluxe, oilaviy xona, kichik lyuks, Prezident lyuksi) {hotel_info.BALCONY_VIEW['direction']} tomonga qaraydi: "
                 f"balkondan chap tomonda {hotel_info.BALCONY_VIEW['left']}, o'ng tomonda {hotel_info.BALCONY_VIEW['right']}.")
     elif top == "floors" and has_word(q, ["oila", "oilam", "bola", "family", "farzand", "семь", "дет"]):
         text = ANSWERS["family"][lang] or ANSWERS["family"]["uz"]

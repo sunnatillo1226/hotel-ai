@@ -34,7 +34,7 @@ a { color: inherit; }
 .nav nav a.muted { color: #b9cbc2; }
 
 /* ---- hero ---- */
-.hero { background: linear-gradient(95deg, rgba(10, 40, 30, .92) 0%, rgba(15, 61, 46, .78) 45%, rgba(15, 61, 46, .25) 100%), url(img/exterior-facade.jpg) center / cover, var(--green);
+.hero { background: linear-gradient(95deg, rgba(10, 40, 30, .86) 0%, rgba(15, 61, 46, .55) 48%, rgba(15, 61, 46, .08) 100%), url(img/bino/asosiy-surat.jpg) center 35% / cover, var(--green);
   color: #fff; padding: 64px 5vw 72px; }
 .hero-inner { max-width: 1080px; margin: 0 auto; }
 .eyebrow { text-transform: uppercase; letter-spacing: .14em; font-size: .78rem; color: var(--gold); margin: 0 0 10px; font-weight: 600; }
@@ -80,7 +80,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outl
   box-shadow: 0 2px 8px rgba(0, 0, 0, .04); transition: transform .2s, box-shadow .2s; cursor: pointer; display: flex; flex-direction: column; }
 .card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
 .card.unavailable { opacity: .55; }
-.banner { height: 170px; display: grid; place-items: center; font-size: 3.4rem; position: relative; overflow: hidden; }
+.banner { height: 200px; display: grid; place-items: center; font-size: 3.4rem; position: relative; overflow: hidden; }
 .banner .photo, .dlg-banner .photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .banner .code { position: absolute; left: 12px; top: 12px; padding: 2px 9px; border-radius: 6px; background: rgba(15, 61, 46, .85); color: #fff; font-size: .72rem; font-weight: 600; letter-spacing: .08em; }
 .t-standard { background: linear-gradient(135deg, #6b8f71, #2f5d50); }
@@ -312,3 +312,57 @@ th { color: var(--muted); font-weight: 600; }
 @media (max-width: 860px) { .building-wrap { grid-template-columns: 1fr; } .floor-panel { position: static; } }
 .form-grid label.check, .doc-fields label.check { flex-direction: row; align-items: center; gap: 8px; }
 .doc-fields .check input { width: auto; flex: 0 0 auto; }
+
+/* ---- Interfeysni yaxshilash (qo'shimcha, mavjud uslublarni buzmaydi) ---- */
+html { scroll-padding-top: 76px; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; border-radius: 6px; }
+.gal-item, .building-photo, .about-photo { transition: box-shadow .2s, transform .2s; }
+.gal-item:hover { box-shadow: 0 8px 22px rgba(15, 61, 46, .16); transform: translateY(-2px); }
+.gal-item img { transition: transform .35s; }
+.gal-item:hover img { transform: scale(1.04); }
+.gal-item { overflow: hidden; }
+img[loading="lazy"] { animation: imgIn .5s ease both; }
+@keyframes imgIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Tepaga qaytish tugmasi (uzun sahifa uchun) */
+.to-top { position: fixed; right: 16px; bottom: 84px; z-index: 25; width: 44px; height: 44px; border-radius: 50%; border: 0;
+  background: var(--green); color: #fff; font-size: 1.3rem; line-height: 1; cursor: pointer; box-shadow: 0 6px 18px rgba(0, 0, 0, .25);
+  opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity .2s, transform .2s; }
+.to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+.to-top:hover { background: #14503d; }
+
+/* Telefon: menyu bitta qatorda, yon tomonga suriladi */
+@media (max-width: 860px) {
+  .nav { flex-wrap: wrap; row-gap: 4px; padding: 10px 5vw 8px; }
+  .nav .logo { font-size: 1.05rem; }
+  .nav .logo span { display: inline; }
+  .nav nav { flex-wrap: nowrap; width: 100%; justify-content: flex-start; gap: 18px; overflow-x: auto; white-space: nowrap;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 4px 0 6px; }
+  .nav nav::-webkit-scrollbar { display: none; }
+  .nav nav a { flex: 0 0 auto; padding: 4px 0; }
+}
+
+/* ---- Eng ko'p tanlangan xonalar lentasi ---- */
+.featured { padding-bottom: 8px; }
+.rail { display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 2px 14px; scrollbar-width: thin; }
+.rail-card { position: relative; flex: 0 0 min(280px, 78vw); aspect-ratio: 4 / 5; border: 0; padding: 0; border-radius: 18px; overflow: hidden;
+  scroll-snap-align: start; cursor: pointer; background: #ece6d6; box-shadow: 0 6px 20px rgba(15, 61, 46, .14); text-align: left; font: inherit; color: #fff; }
+.rail-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.rail-card:hover img { transform: scale(1.06); }
+.rail-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(8, 30, 22, .88) 100%); }
+.rail-badge { position: absolute; top: 14px; left: 14px; z-index: 2; background: var(--gold); color: #24190a; font-size: .75rem; font-weight: 700;
+  padding: 5px 11px; border-radius: 99px; }
+.rail-info { position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 2; display: flex; flex-direction: column; gap: 4px; }
+.rail-name { font-family: Fraunces, serif; font-weight: 700; font-size: 1.2rem; line-height: 1.2; }
+.rail-meta { font-size: .82rem; opacity: .92; }
+.rail-price { font-size: 1.3rem; font-weight: 700; color: var(--gold); }
+.rail-price small { font-size: .78rem; color: #fff; font-weight: 400; opacity: .85; }
+.card .banner .photo { transition: transform .5s; }
+.card:hover .banner .photo { transform: scale(1.05); }
+
+/* Telefon: chat tugmasi sahifa boshida hero'dagi tugmalarni yopmasin — biroz skroldan keyin chiqadi */
+@media (max-width: 600px) {
+  .chat-fab { right: 14px; bottom: 14px; transition: opacity .25s; }
+  body:not(.scrolled) .chat-fab { opacity: 0; pointer-events: none; }
+  .to-top { bottom: 72px; right: 14px; }
+}

@@ -20,12 +20,12 @@
 | −2, −1 | Yopiq avtoturargoh (60 o'rin, 5 ta elektromobil quvvatlash) |
 | 1 | Lobby, 24 soatlik resepshn, restoran va bar, konferensiya zali (80 kishi), yuk saqlash |
 | 2 | Moslashgan xonalar (ACC, 6 ta, liftga eng yaqin), fitnes zal, sauna |
-| 3 | **Oilaviy qavat:** faqat Family xonalar (8 ta) — oilalar alohida, tinch qavatda |
+| 3 | **Oilaviy qavat:** faqat oilaviy xonalar (8 ta) — oilalar alohida, tinch qavatda |
 | 4 | Yakka mehmonlar: Single (12 ta) |
 | 5–6 | Juftliklar: Double (20 ta, har qavatda 10 tadan) |
 | 7 | Do'stlar/hamkasblar: Twin (16 ta) |
 | 8 | Balkonli Deluxe (14 ta) |
-| 9 | Suite qavati: Junior Suite (6 ta) va Prezident Suite (2 ta) |
+| 9 | Suite qavati: Kichik lyuks (6 ta) va Prezident lyuksi (2 ta) |
 
 Nega qavatlar ajratilgan? Real mehmonxonalarda oilalar (bolalar shovqini), yakka mehmonlar va VIP mehmonlar alohida qavatlarga joylanadi — bir-biriga xalaqit bermasligi uchun; nogironlar uchun xonalar lift yaqinida past qavatda bo'ladi.
 
@@ -44,14 +44,14 @@ Xona kodlari (SGL, DBL, TWN ...) mehmonxona sohasida keng qo'llaniladigan qisqar
 
 | Kod | Xona turi | Narx/kecha | Sig'im | Soni | Maydon | Karavot | Kimlar uchun |
 |---|---|---|---|---|---|---|---|
-| SGL | Standart Single | 55$ | 1 | 12 | 18 m² | 1 yakka (1,20 m) | yolg'iz sayohatchi, xizmat safari |
-| DBL | Standart Double | 70$ | 2 | 20 | 22 m² | 1 ikki kishilik (1,60 m) | **er-xotin va juftliklar**, yolg'iz |
-| TWN | Standart Twin | 72$ | 2 | 16 | 22 m² | 2 yakka (0,90 m) | do'stlar, hamkasblar |
+| SGL | Standart yakka xona | 55$ | 1 | 12 | 18 m² | 1 yakka (1,20 m) | yolg'iz sayohatchi, xizmat safari |
+| DBL | Standart ikki kishilik xona | 70$ | 2 | 20 | 22 m² | 1 ikki kishilik (1,60 m) | **er-xotin va juftliklar**, yolg'iz |
+| TWN | Standart ikki karavotli xona | 72$ | 2 | 16 | 22 m² | 2 yakka (0,90 m) | do'stlar, hamkasblar |
 | ACC | Moslashgan (Accessible) | 70$ | 2 | 6 | 26 m² | 1 ikki kishilik, past | **nogironligi bo'lgan mehmonlar** |
-| DLX | Deluxe Double, balkonli | 95$ | 3 | 14 | 28 m² | king-size (1,80 m) | juftliklar, dam olish, biznes |
-| FAM | Family xona | 130$ | 4 | 8 | 36 m² | 1 ikki kishilik + 2 yakka | **oilalar (bolalar bilan)** |
-| JSU | Junior Suite | 150$ | 3 | 6 | 42 m² | king-size + divan-karavot | asal oyi, yubiley, uzoq safar |
-| PRS | Prezident Suite | 320$ | 4 | 2 | 95 m² | 2 yotoqxona, 2 king-size | VIP, yubiley, delegatsiya |
+| DLX | Deluxe (hashamatli) xona, balkonli | 95$ | 3 | 14 | 28 m² | king-size (1,80 m) | juftliklar, dam olish, biznes |
+| FAM | Oilaviy xona | 130$ | 4 | 8 | 36 m² | 1 ikki kishilik + 2 yakka | **oilalar (bolalar bilan)** |
+| JSU | Kichik lyuks (Junior Suite) | 150$ | 3 | 6 | 42 m² | king-size + divan-karavot | asal oyi, yubiley, uzoq safar |
+| PRS | Prezident lyuksi | 320$ | 4 | 2 | 95 m² | 2 yotoqxona, 2 king-size | VIP, yubiley, delegatsiya |
 
 **Nima uchun aynan shunday?** Haqiqiy mehmonxonada eng ko'p xona — standart turlar (SGL/DBL/TWN, jami 48 ta), premium turlar kam (PRS atigi 2 ta). Shu sababli narx va soni piramida shaklida. Narxlar ham raqobatchilar mantig'iga mos: oddiy xonadan suitegacha ~6 barobar farq.
 
@@ -105,7 +105,7 @@ Quyida ishlatilgan asosiy manbalar: **Hotelstars Union** (Yevropa va ko'p davlat
 **Xulosa:** mehmonxona 4 yulduzli toifa *g'oyasi va xizmatlar to'plami* jihatidan jahon mezonlariga mos loyihalangan; ammo bu rasmiy sertifikat emas. Ustozga "jahon standartlariga mos keladimi?" degan savolga: **"mezonlarga moslab loyihaladik, rasmiy sertifikat esa real bino qurilgandan keyin olinadi"** deb javob bering.
 
 ## 5.6. Rasmlar haqida
-Rasmlar Pexels (bepul litsenziya) va Pixabay saytlaridan, ustoz ruxsati bilan olingan; yana 3 ta rasmni (lobby ×2, hovuzli bino) foydalanuvchi namuna sifatida taqdim etgan (manba/litsenziyasini alohida tekshirish kerak). Ular **namunaviy (illyustrativ)** — bu aynan shu mehmonxona emas. Har bir xona turida 3–5 ta surat (yotoqxona, dush/hammom, balkon, yo'lak), mehmonxona bo'yicha esa kutib olish, lobby, yo'lak, restoran, oshxona, zal, yashil hudud va xiyobon suratlari bor. **Balkondan ko'rinish** — kollaj: haqiqiy Toshkent teleminorasi (Pixabay, xusenru) va xiyobon (Pexels) suratlari birlashtirilgan; saytda buning izohi yozilgan. Ro'yxat: `frontend/img/CREDITS.md`. Bir nechta surat bir necha xonada takrorlanadi (zaxira yetarli emas).
+Rasmlar Pexels (bepul litsenziya) va Pixabay saytlaridan, ustoz ruxsati bilan olingan; yana 2 ta lobby rasmini foydalanuvchi namuna sifatida taqdim etgan (manba/litsenziyasini alohida tekshirish kerak). Ular **namunaviy (illyustrativ)** — bu aynan shu mehmonxona emas. Har bir xona turida 3–5 ta surat (yotoqxona, dush/hammom, balkon, yo'lak), mehmonxona bo'yicha esa kutib olish, lobby, yo'lak, restoran, oshxona, zal, yashil hudud va xiyobon suratlari bor. **Balkondan ko'rinish** — kollaj: haqiqiy Toshkent teleminorasi (Pixabay, xusenru) va xiyobon (Pexels) suratlari birlashtirilgan; saytda buning izohi yozilgan. Ro'yxat: `frontend/img/MUALLIFLAR.md`. Bir nechta surat bir necha xonada takrorlanadi (zaxira yetarli emas).
 
 ## 5.7. Himoya uchun: tez-tez beriladigan savollar
 - **Nima uchun xona turi va xona soni alohida ajratilgan?** Haqiqiy mehmonxonada bir turdan ko'p xona bor; `Room` — tur, `quantity` — soni. Bo'sh-band tekshiruvi eng band kechada `quantity − band` ni hisoblaydi (`services.peak_occupancy`).

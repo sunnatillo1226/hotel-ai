@@ -47,7 +47,7 @@ const check = (name, ok, extra = "") => { console.log((ok ? "OK   " : "XATO ") +
   check("galereya: bo'limlar + suratlar", d.querySelectorAll("#galleryTabs button").length >= 7 && d.querySelectorAll("#galleryGrid img").length >= 2);
   d.querySelector('#galleryTabs [data-group="Zallar"]').dispatchEvent(new w.MouseEvent("click", { bubbles: true }));
   check("galereya: 'Zallar' tanlandi", d.querySelectorAll("#galleryGrid img").length === 2);
-  check("balkondan ko'rinish: chap teleminora, o'ng xiyobon", $("balconyList").textContent.includes("Chap tomonda") && $("balconyList").textContent.includes("teleminorasi") && $("balconyImg").src.includes("balcony-view"));
+  check("balkondan ko'rinish: chap teleminora, o'ng xiyobon", $("balconyList").textContent.includes("Chap tomonda") && $("balconyList").textContent.includes("teleminorasi") && $("balconyImg").src.includes("balkondan-korinish"));
 
   // "Kimlar uchun?" filtri
   d.querySelector('[data-aud="couple"]').dispatchEvent(new w.MouseEvent("click", { bubbles: true }));
@@ -72,7 +72,7 @@ const check = (name, ok, extra = "") => { console.log((ok ? "OK   " : "XATO ") +
   $("aiForm").dispatchEvent(new w.Event("submit", { cancelable: true }));
   await sleep(1000);
   check("AI qidiruv filtr ko'rsatdi", !$("aiFilters").hidden && $("aiFilters").textContent.includes("160"), $("aiFilters").textContent.slice(0, 90));
-  check("AI birinchi xona: Family xona", d.querySelector("#roomGrid .card h3").textContent === "Family xona", d.querySelector("#roomGrid .card h3")?.textContent);
+  check("AI birinchi xona: Oilaviy xona", d.querySelector("#roomGrid .card h3").textContent === "Oilaviy xona", d.querySelector("#roomGrid .card h3")?.textContent);
 
   // xona oynasi + bron
   d.querySelector("#roomGrid .card").dispatchEvent(new w.MouseEvent("click", { bubbles: true }));
@@ -110,7 +110,7 @@ const check = (name, ok, extra = "") => { console.log((ok ? "OK   " : "XATO ") +
   $("roomDialog").close();
 
   // zaxira: bron qilingach shu sanalarda 8 ta Family xonadan 7 tasi qoladi
-  const stockOf = () => [...d.querySelectorAll("#roomGrid .card")].find((c) => c.querySelector("h3").textContent === "Family xona")?.textContent || "";
+  const stockOf = () => [...d.querySelectorAll("#roomGrid .card")].find((c) => c.querySelector("h3").textContent === "Oilaviy xona")?.textContent || "";
   $("fCheckIn").value = iso(40); $("fCheckOut").value = iso(43); $("fGuests").value = "4";
   $("searchForm").dispatchEvent(new w.Event("submit", { cancelable: true }));
   await sleep(800);

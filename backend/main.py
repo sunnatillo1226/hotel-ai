@@ -33,7 +33,7 @@ import hotel_info
 import schemas
 from database import Base, SessionLocal, engine, get_db
 from models import Booking, Review, Room
-from seed import seed_if_empty
+from seed import seed_if_empty, sync_room_display
 from services import calc_total, is_room_available, rank_rooms, room_to_dict, rooms_to_dicts
 
 ADMIN_KEY = os.getenv("ADMIN_KEY", "admin123")
@@ -57,6 +57,7 @@ async def lifespan(app: FastAPI):
     db = SessionLocal()
     try:
         seed_if_empty(db)
+        sync_room_display(db)      # nom/tavsif/suratlar o'zgargan bo'lsa, eski bazaga ham ko'chiradi
     finally:
         db.close()
     yield

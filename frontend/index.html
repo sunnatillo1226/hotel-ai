@@ -75,6 +75,15 @@
 
   <!-- ===== Xonalar ===== -->
   <main>
+    <!-- Eng ko'p tanlanadigan xonalar (reyting bo'yicha; ma'lumot: GET /api/rooms) -->
+    <section class="section featured" id="featured" hidden>
+      <div class="section-head">
+        <h2>Mehmonlar eng ko'p tanlagan xonalar</h2>
+        <p class="muted">Reytingi yuqori xonalar. Bosing — suratlari, tavsifi va bron qilish oynasi ochiladi.</p>
+      </div>
+      <div id="featuredRail" class="rail"></div>
+    </section>
+
     <section class="section" id="rooms">
       <div class="section-head">
         <h2 id="roomsTitle">Bizning xonalar</h2>
@@ -99,8 +108,8 @@
       </div>
       <div class="building-wrap">
         <figure class="building-photo">
-          <img src="img/exterior-pool.jpg" alt="Mehmonxona binosi va hovuzli hovli (namunaviy surat)" width="1200" height="900" loading="lazy">
-          <figcaption>Bino va hovli (namunaviy surat)</figcaption>
+          <img src="img/bino/kechki-korinish.jpg" alt="Kechqurun yoritilgan mehmonxona binosi (namunaviy surat)" width="1400" height="1051" loading="lazy">
+          <figcaption>Kechqurun yoritilgan mehmonxona binosi (namunaviy surat)</figcaption>
         </figure>
         <div class="floor-box">
           <ol id="floorList" class="floor-list" aria-label="Qavatlar"></ol>
@@ -131,7 +140,7 @@
           <ol id="layoutList" class="layout-list"></ol>
         </div>
         <figure class="about-photo">
-          <img src="img/lobby-atrium.jpg" alt="Lobby va resepshn (namunaviy surat)" width="1024" height="768" loading="lazy">
+          <img src="img/lobbi/lobbi-resepshn.jpg" alt="Lobby va resepshn (namunaviy surat)" width="1024" height="768" loading="lazy">
           <figcaption>Lobby va resepshn</figcaption>
         </figure>
       </div>
@@ -155,7 +164,7 @@
     <section class="section alt" id="balcony">
       <div class="section-head"><h2>Balkondan ko'rinish</h2><p class="muted" id="balconySub"></p></div>
       <figure class="balcony-fig">
-        <img id="balconyImg" src="img/balcony-view.jpg" alt="Balkondan ko'rinish: chapda Toshkent teleminorasi, o'ngda xiyobon" width="1600" height="676" loading="lazy">
+        <img id="balconyImg" src="img/balkon/balkondan-korinish.jpg" alt="Balkondan ko'rinish: chapda Toshkent teleminorasi, o'ngda xiyobon" width="1600" height="676" loading="lazy">
         <span class="bal-label left">📡 Toshkent teleminorasi</span>
         <span class="bal-label right">🌳 Xiyobon va bog'</span>
       </figure>
@@ -241,6 +250,7 @@
   </dialog>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <button id="toTop" class="to-top" type="button" aria-label="Tepaga qaytish" title="Tepaga qaytish">↑</button>
 
   <script src="config.js" defer></script>
   <script src="app.js" defer></script>

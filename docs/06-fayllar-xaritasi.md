@@ -30,7 +30,7 @@ Ustoz "bu qism qayerda?" deb so'rasa, shu jadvaldan toping. Har bir faylning yuq
 | `admin.html` | Admin panel |
 | `config.js` | Backend manzili (deploydan keyin shu yer o'zgaradi) |
 | `netlify.toml` | Netlify sozlamasi: kesh va xavfsizlik sarlavhalari |
-| `img/*.jpg`, `img/CREDITS.md` | Haqiqiy namunaviy suratlar (nomi bo'yicha guruhlangan: `exterior-*` bino, `lobby-*`, `welcome-*` kutib olish, `bath-*` hammom, `corridor-*` yo'lak, `kitchen-*`, `restaurant-*`, `hall-*` zal, `garden-*`/`park-*` yashil hudud, `room-*`/`bed-*`/`suite-*` yotoqxona, `balcony-view.jpg` balkondan ko'rinish) va mualliflar ro'yxati |
+| `img/` | Namunaviy suratlar, **o'zbekcha nomli mavzu papkalarida**: `bino/` (bino, fasad, kechki ko'rinish), `lobbi/` (lobby, resepshn), `yolak/` (qavat yo'laklari), `restoran/` (restoran, bufet, nonushta, oshxona), `zallar/` (konferensiya, banket), `hovli/` (yashil hudud, spa), `xiyobon/` (atrofdagi park), `avtoturargoh/`, `kutib-olish/` (1–5 bosqich), `xonalar/` (har bir xona turi), `hammom/`, `balkon/`. Mualliflar: `img/MUALLIFLAR.md` |
 | `tests/smoke.js` | Sayt testi (45 tekshiruv) |
 
 ## Boshqalar
