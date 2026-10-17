@@ -366,3 +366,6 @@ img[loading="lazy"] { animation: imgIn .5s ease both; }
   body:not(.scrolled) .chat-fab { opacity: 0; pointer-events: none; }
   .to-top { bottom: 72px; right: 14px; }
 }
+
+/* Balkon surati izohi */
+.balcony-fig figcaption { padding: 6px 12px; font-size: .78rem; color: var(--muted); background: var(--card, #fff); }

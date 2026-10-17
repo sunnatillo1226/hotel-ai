@@ -80,5 +80,5 @@ Suratlar Pexels (https://www.pexels.com/license/) va Pixabay saytlaridan olingan
 | yolak/yolak-3.jpg | Rafael Rodrigues | https://www.pexels.com/photo/34728173/ |
 | zallar/banket-zali.jpg | Matheus Bertelli | https://www.pexels.com/photo/17057001/ |
 | zallar/konferensiya-zali.jpg | Matheus Bertelli | https://www.pexels.com/photo/17056964/ |
-| balkon/balkondan-korinish.jpg | kollaj: teleminora — xusenru (Pixabay), xiyobon — Pexels #13760786 (Pexels) | https://pixabay.com/ |
+| balkon/balkondan-korinish.jpg | Kimpton Sawyer Hotel balkonidan (Pexels) | https://www.pexels.com/photo/18559573/ |
 | lobbi/lobbi-resepshn.jpg, lobbi/lobbi-kutish-zonasi.jpg | foydalanuvchi taqdim etgan namunalar (manba/litsenziyasi o'quv loyihasi uchun alohida tekshirilishi kerak) | — |

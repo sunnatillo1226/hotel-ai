@@ -156,7 +156,7 @@ BALCONY_VIEW = {
     "left": f"Toshkent teleminorasi ({_tower['km']:.1f} km, yo'nalishdan {_td}° {_ts}ga)" if _ts == "chap" else "",
     "right": f"Amir Temur xiyoboni va yashil xiyobon ({_park['km']:.1f} km, yo'nalishdan {_pd}° {_ps}ga)",
     "sides_ok": _ts == "chap" and _ps == "o'ng",
-    "note": "Surat — namunaviy kollaj: haqiqiy teleminora va xiyobon suratlari birlashtirilgan, mehmonxona o'quv loyihasi.",
+    "note": "Surat — namunaviy: boshqa mehmonxona balkonidan olingan shahar ko'rinishi (mehmonxona o'quv loyihasi). Teleminora va xiyobon yo'nalishi yuqoridagi matnda koordinatalardan hisoblangan.",
 }
 
 # Mehmonxona suratlari galereyasi (bo'lim bo'yicha). src — frontend/img/ ichida.
@@ -377,7 +377,7 @@ PHOTO_CREDITS = [
     {"file": "yolak/yolak-3.jpg", "author": "Rafael Rodrigues", "url": "https://www.pexels.com/photo/34728173/"},
     {"file": "zallar/banket-zali.jpg", "author": "Matheus Bertelli", "url": "https://www.pexels.com/photo/17057001/"},
     {"file": "zallar/konferensiya-zali.jpg", "author": "Matheus Bertelli", "url": "https://www.pexels.com/photo/17056964/"},
-    {"file": "balkon/balkondan-korinish.jpg", "author": "kollaj: teleminora — xusenru (Pixabay), xiyobon — Pexels #13760786 (Pexels)", "url": "https://pixabay.com/"},
+    {"file": "balkon/balkondan-korinish.jpg", "author": "Kimpton Sawyer Hotel balkonidan (Pexels)", "url": "https://www.pexels.com/photo/18559573/"},
     {"file": "lobbi/lobbi-resepshn.jpg, lobbi/lobbi-kutish-zonasi.jpg", "author": "foydalanuvchi taqdim etgan namunalar (manba/litsenziyasi o'quv loyihasi uchun alohida tekshirilishi kerak)", "url": ""},
 ]
 
