@@ -46,7 +46,7 @@ hotel-ai/
 │   ├── database.py          ← bazaga ulanish
 │   ├── seed.py              ← 8 xona turi (jami 84 xona) va 6 ta sharh
 │   ├── hotel_info.py        ← mehmonxona profili: bino, joylashuv, qulayliklar, hujjatlar (sayt va AI shundan oladi)
-│   ├── tests/               ← avtomatik testlar (pytest, 49 ta)
+│   ├── tests/               ← avtomatik testlar (pytest, 50 ta)
 │   ├── benchmark.py         ← tezlikni o'lchash skripti
 │   ├── requirements.txt     ← kerakli kutubxonalar
 │   ├── requirements-dev.txt ← test uchun qo'shimcha kutubxonalar
@@ -101,7 +101,7 @@ Token bo'lmasa ham sayt to'liq ishlaydi: AI o'rniga oddiy qoidalarga asoslangan 
 ```bash
 cd backend
 pip install -r requirements-dev.txt
-pytest -v              # 49 ta avtomatik test
+pytest -v              # 50 ta avtomatik test
 python benchmark.py    # tezlik o'lchovi (150 xona, 3000 bron)
 ```
 Sayt testi (backend ishlab turganda): `cd frontend/tests && npm install jsdom && node smoke.js`

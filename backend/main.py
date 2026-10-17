@@ -162,6 +162,8 @@ def list_rooms(
     only_available: bool = False,
     db: Session = Depends(get_db),
 ):
+    if check_in and check_out and check_out <= check_in:
+        raise HTTPException(400, "Chiqish sanasi kirish sanasidan keyin bo'lishi kerak")
     query = db.query(Room)
     if room_type:
         query = query.filter(Room.room_type == room_type)

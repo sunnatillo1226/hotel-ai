@@ -464,3 +464,10 @@ def test_gallery_photos_exist_on_disk_and_have_uzbek_captions(client):
     for g in gallery:
         assert (root / g["src"]).exists(), g["src"]                       # havola buzuq emas
         assert g["caption"] and "Family" not in g["caption"]
+
+
+def test_rooms_search_rejects_reversed_dates(client):
+    """Chiqish sanasi kirishdan oldin bo'lsa, qidiruv 400 qaytaradi (jimgina ishlamaydi)."""
+    r = client.get(f"/api/rooms?check_in={d(12)}&check_out={d(10)}")
+    assert r.status_code == 400
+    assert client.get(f"/api/rooms?check_in={d(10)}&check_out={d(12)}").status_code == 200

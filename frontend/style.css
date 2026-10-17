@@ -369,3 +369,14 @@ img[loading="lazy"] { animation: imgIn .5s ease both; }
 
 /* Balkon surati izohi */
 .balcony-fig figcaption { padding: 6px 12px; font-size: .78rem; color: var(--muted); background: var(--card, #fff); }
+
+/* Netlify o'zi pastki o'ng burchakka "Powered by Netlify" belgisini qo'yadi (~64px balandlikda).
+   U chat tugmasi va chat oynasining pastini yopmasligi uchun hammasini yuqoriroq joylashtiramiz. */
+.chat-fab { bottom: 84px; }
+.chat-panel { bottom: 84px; height: min(560px, calc(100vh - 110px)); }
+.to-top { bottom: 150px; }
+@media (max-width: 600px) {
+  .chat-fab { bottom: 84px; right: 14px; }
+  .chat-panel { right: 12px; bottom: 84px; height: min(560px, calc(100vh - 110px)); }
+  .to-top { bottom: 150px; right: 14px; }
+}
