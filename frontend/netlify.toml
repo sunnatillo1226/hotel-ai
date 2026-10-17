@@ -2,17 +2,17 @@
 [build]
   publish = "."
 
-# Fayllarni brauzer keshida saqlash: 1 soat, keyin o'zgargan-o'zgarmaganini tekshiradi.
-# (Takroriy tashrifda sayt deyarli darrov ochiladi.)
+# CSS/JS har safar serverdan o'zgargan-o'zgarmaganini so'raydi (o'zgarmasa 304, tez ochiladi).
+# Shunda yangilangan saytni ko'rishda eski fayl keshda qolib, sayt buzilmaydi.
 [[headers]]
   for = "/*.css"
   [headers.values]
-    Cache-Control = "public, max-age=3600, must-revalidate"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/*.js"
   [headers.values]
-    Cache-Control = "public, max-age=3600, must-revalidate"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # Xavfsizlik sarlavhalari
 [[headers]]
